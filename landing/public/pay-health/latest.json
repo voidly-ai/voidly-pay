@@ -1,25 +1,25 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-04-20T17:33:52.494Z",
-  "run_id": "24680954691",
+  "generated_at": "2026-04-20T18:40:41.940Z",
+  "run_id": "24683935727",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 341,
+    "latency_ms": 320,
     "counts": {
-      "wallets": 62,
+      "wallets": 63,
       "transfers_settled_24h": 1,
       "active_admin_keys": 1
     }
   },
   "stats_summary": {
-    "wallets": 62,
+    "wallets": 63,
     "active_capabilities": 16,
     "distinct_providers": 3,
-    "hires_total": 365,
-    "hires_completed": 340,
-    "value_settled_cr": 0.884
+    "hires_total": 381,
+    "hires_completed": 355,
+    "value_settled_cr": 0.8962
   },
   "providers": [
     {
@@ -29,10 +29,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "9ebbcda7-3896-47c4-bf62-89f1f1362186",
+      "receipt_id": "11386453-c6ef-47ed-9d9e-22cc79a94fb1",
       "accepted": true,
       "verified": true,
-      "latency_ms": 2952
+      "latency_ms": 7080
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -41,10 +41,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "5749f2f3-9d67-4d26-862c-90a89e215abb",
+      "receipt_id": "26a47341-50dd-4e19-8a23-0229f93144c6",
       "accepted": true,
       "verified": true,
-      "latency_ms": 5038
+      "latency_ms": 9148
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -52,8 +52,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire 96aafc48-6102-4176-89da-891a2792386f did not reach claimed state (got requested)",
-      "latency_ms": 62226
+      "error": "hire bc070363-00e4-4d81-b8eb-b0cc14169e7d did not reach claimed state (got requested)",
+      "latency_ms": 62191
     }
   ],
   "ok": false,
