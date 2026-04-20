@@ -1,0 +1,278 @@
+name: Voidly Pay Network Health
+
+# Every 15 minutes, does a full end-to-end probe of every known provider:
+#   1. GET /v1/pay/health + /v1/pay/stats
+#   2. For each live provider DID, search its capabilities
+#   3. Hire the cheapest non-LLM capability (hash.sha256 preferred)
+#   4. Poll the receipt, accept or dispute based on local verification
+#   5. Record the result — HTTP status, latency, success/fail — as JSON
+#   6. Commit pay-health/latest.json + pay-health/history/YYYY-MM-DDTHH-MM.json
+#      so the file history is an immutable audit trail in git.
+#
+# If ALL providers fail the health check, the job exits non-zero. GitHub
+# then surfaces it on the Actions tab; notifications fire if the user has
+# them configured. This is the "the marketplace is down" alarm.
+#
+# Runs entirely on public endpoints. No secrets required.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voidly-pay-network-health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install @voidly/pay-sdk
+        run: |
+          mkdir -p /tmp/health && cd /tmp/health
+          npm init -y >/dev/null
+          npm install --silent --no-audit --no-fund @voidly/pay-sdk@latest
+
+      - name: Run network health probe
+        id: probe
+        env:
+          REPO_DIR: ${{ github.workspace }}
+        run: |
+          mkdir -p pay-health/history landing/public/pay-health
+          cat > /tmp/health/run.mjs <<'EOF'
+          import { VoidlyPay, generateKeyPair, sha256Hex } from '@voidly/pay-sdk';
+          import { writeFileSync, readFileSync, existsSync } from 'node:fs';
+          import { join } from 'node:path';
+
+          const API = 'https://api.voidly.ai';
+          const REPO = process.env.REPO_DIR || process.cwd();
+          const cycleStart = new Date().toISOString();
+          const report = {
+            schema: 'voidly-pay-network-health/v1',
+            generated_at: cycleStart,
+            run_id: process.env.GITHUB_RUN_ID || null,
+            // Omit run_url — the source repo is private so the link
+            // 404s for the public. Keep the run_id as an opaque
+            // identifier that operators with repo access can look up.
+            run_url: null,
+            health: null,
+            stats_summary: null,
+            providers: [],
+            ok: true,
+          };
+
+          // ── 1. Base health / stats ────────────────────────────────────
+          try {
+            const t0 = Date.now();
+            const h = await fetch(`${API}/v1/pay/health`).then(r => r.json());
+            report.health = { ok: !h.system_frozen, system_frozen: !!h.system_frozen, latency_ms: Date.now() - t0, counts: h.counts || null };
+          } catch (e) {
+            report.health = { ok: false, error: String(e) };
+            report.ok = false;
+          }
+
+          try {
+            const s = await fetch(`${API}/v1/pay/stats`).then(r => r.json());
+            report.stats_summary = {
+              wallets: s.wallets?.total ?? 0,
+              active_capabilities: s.capabilities?.active ?? 0,
+              distinct_providers: s.capabilities?.distinct_providers ?? 0,
+              hires_total: s.hires?.total ?? 0,
+              hires_completed: s.hires?.total_completed ?? 0,
+              value_settled_cr: ((s.value_settled?.total_micro ?? 0) / 1_000_000),
+            };
+          } catch (e) {
+            report.stats_summary = { error: String(e) };
+          }
+
+          // ── 2. Fresh DID + faucet (used only to probe hires) ──────────
+          const kp = generateKeyPair();
+          const pay = new VoidlyPay({
+            did: kp.did,
+            secretBase64: kp.secretKeyBase64,
+          });
+
+          // Register with relay so the worker can look up the pubkey.
+          try {
+            await fetch(`${API}/v1/agent/register`, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                name: `network-health-${Date.now()}`,
+                signing_public_key: kp.publicKeyBase64,
+                encryption_public_key: kp.publicKeyBase64,
+              }),
+            });
+            await pay.ensureWallet();
+            const faucet = await pay.faucet();
+            if (!faucet?.ok) {
+              console.error('[health] faucet did not return ok:', JSON.stringify(faucet));
+            }
+          } catch (e) {
+            console.error('[health] faucet bootstrap failed:', e.message);
+            report.ok = false;
+          }
+
+          // ── 3. Discover every distinct provider via the search API ────
+          let providers = new Map();
+          try {
+            const r = await fetch(`${API}/v1/pay/capability/search?limit=200`).then(r => r.json());
+            for (const c of (r.capabilities || [])) {
+              if (!providers.has(c.did)) providers.set(c.did, []);
+              providers.get(c.did).push(c);
+            }
+          } catch (e) {
+            report.ok = false;
+          }
+
+          // ── 4. For each provider: hire its cheapest cap, verify ──────
+          for (const [did, caps] of providers.entries()) {
+            const candidates = caps
+              .filter(c => c.active)
+              .sort((a, b) => a.price_per_call_micro - b.price_per_call_micro);
+            const preferred = candidates.find(c => c.capability === 'hash.sha256') ||
+                              candidates.find(c => !c.capability.startsWith('llm.'));
+            if (!preferred) {
+              report.providers.push({ did, status: 'no_probeable_capability', capability_count: caps.length });
+              continue;
+            }
+
+            const start = Date.now();
+            const text = preferred.capability === 'hash.sha256'
+              ? `network-health-${Date.now()}-${Math.random().toString(36).slice(2,10)}`
+              : 'health ping';
+            const expected = preferred.capability === 'hash.sha256'
+              ? await sha256Hex(text)
+              : null;
+
+            try {
+              const result = await pay.hireAndWait({
+                capabilityId: preferred.id,
+                input: { text },
+                deliveryDeadlineHours: 1,
+                pollIntervalMs: 2000,
+                timeoutMs: 60_000,
+                verify: expected ? (summary) => summary === expected : undefined,
+              });
+              const latency = Date.now() - start;
+              report.providers.push({
+                did,
+                capability: preferred.capability,
+                capability_id: preferred.id,
+                price_micro: preferred.price_per_call_micro,
+                status: 'ok',
+                receipt_state: result.receipt?.state || 'unknown',
+                receipt_id: result.receipt?.id,
+                accepted: !!result.accepted,
+                verified: expected ? (result.accepted === true) : null,
+                latency_ms: latency,
+              });
+            } catch (e) {
+              const latency = Date.now() - start;
+              report.providers.push({
+                did,
+                capability: preferred.capability,
+                capability_id: preferred.id,
+                price_micro: preferred.price_per_call_micro,
+                status: 'hire_failed',
+                error: String(e.message || e).slice(0, 240),
+                latency_ms: latency,
+              });
+              report.ok = false;
+            }
+          }
+
+          // ── 5. Write report ──────────────────────────────────────────
+          const ok_count = report.providers.filter(p => p.status === 'ok').length;
+          const total = report.providers.length;
+          report.summary = {
+            providers_probed: total,
+            providers_ok: ok_count,
+            providers_failing: total - ok_count,
+            success_rate: total > 0 ? ok_count / total : 0,
+          };
+
+          const body = JSON.stringify(report, null, 2);
+          writeFileSync(join(REPO, 'pay-health', 'latest.json'), body);
+          // Mirror to landing/public so CF Pages serves it at
+          // voidly.ai/pay-health/latest.json (the repo is private,
+          // so raw.githubusercontent.com would 404 on fetch).
+          writeFileSync(join(REPO, 'landing', 'public', 'pay-health', 'latest.json'), body);
+          const stamp = new Date().toISOString().replace(/:/g, '-').slice(0, 16);
+          writeFileSync(join(REPO, 'pay-health', 'history', `${stamp}.json`), body);
+
+          // ── 6. Stale-capability tracking ─────────────────────────────
+          // Build a per-capability_id failure-streak record, persisted
+          // in pay-health/stale.json so it accumulates across runs.
+          const stalePath = join(REPO, 'pay-health', 'stale.json');
+          let stale = { schema: 'voidly-pay-stale/v1', updated_at: new Date().toISOString(), capabilities: {} };
+          if (existsSync(stalePath)) {
+            try { stale = JSON.parse(readFileSync(stalePath, 'utf8')); stale.updated_at = new Date().toISOString(); } catch {}
+          }
+          for (const p of report.providers) {
+            if (!p.capability_id) continue;
+            const prev = stale.capabilities[p.capability_id] || { streak_failed: 0, total_runs: 0, total_failed: 0, total_ok: 0, first_seen: cycleStart, last_fail: null, last_ok: null };
+            prev.total_runs += 1;
+            prev.did = p.did;
+            prev.capability = p.capability;
+            prev.price_micro = p.price_micro;
+            if (p.status === 'ok') {
+              prev.streak_failed = 0;
+              prev.total_ok += 1;
+              prev.last_ok = report.generated_at;
+            } else {
+              prev.streak_failed += 1;
+              prev.total_failed += 1;
+              prev.last_fail = report.generated_at;
+              prev.last_error = p.error || p.status;
+            }
+            prev.stale = prev.streak_failed >= 3;
+            stale.capabilities[p.capability_id] = prev;
+          }
+          stale.summary = {
+            total_tracked: Object.keys(stale.capabilities).length,
+            currently_stale: Object.values(stale.capabilities).filter(c => c.stale).length,
+          };
+          const staleBody = JSON.stringify(stale, null, 2);
+          writeFileSync(stalePath, staleBody);
+          writeFileSync(join(REPO, 'landing', 'public', 'pay-health', 'stale.json'), staleBody);
+
+          console.log(JSON.stringify(report.summary, null, 2));
+          if (!report.ok && ok_count === 0) {
+            console.error('[health] ZERO providers healthy — failing job');
+            process.exit(1);
+          }
+          EOF
+          cd /tmp/health && node run.mjs
+
+      - name: Commit health snapshot
+        run: |
+          git config user.name  "voidly-pay-health[bot]"
+          git config user.email "voidly-pay-health@users.noreply.github.com"
+          git add pay-health/latest.json pay-health/history/ pay-health/stale.json landing/public/pay-health/latest.json landing/public/pay-health/stale.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "pay-health: $(date -u +'%Y-%m-%dT%H:%MZ') snapshot"
+            # Retry with rebase on race with parallel workflows
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push origin main && break
+              sleep $((RANDOM % 10 + 5))
+            done
+          fi

@@ -1,0 +1,36 @@
+version: "3.9"
+
+# Single-node Voidly Pay Hydra provider.
+# Docker Compose wrapper so `docker compose up -d` is the whole install.
+#
+#   docker compose up -d
+#   docker compose logs -f
+#   docker compose exec hydra voidly-hydra status
+
+services:
+  hydra:
+    build: .
+    image: voidly-pay-hydra:local
+    container_name: voidly-pay-hydra
+    restart: always
+    environment:
+      - VOIDLY_API=https://api.voidly.ai
+      - HYDRA_HOME=/data
+      # Uncomment to choose a different default capability / price:
+      # - HYDRA_CAPABILITY=hash.sha256
+      # - HYDRA_PRICE_CREDITS=0.0004
+    volumes:
+      - hydra-data:/data
+    ports:
+      - "8420:8420"
+    # Hardening — matches the systemd unit semantics as closely as compose allows.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+
+volumes:
+  hydra-data:
+    driver: local

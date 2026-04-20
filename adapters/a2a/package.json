@@ -1,0 +1,26 @@
+{
+  "name": "voidly-pay-a2a-adapter",
+  "version": "1.0.0",
+  "description": "Google A2A v0.3.0 bridge over Voidly Pay \u2014 every capability becomes an A2A skill.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@voidly/pay-sdk": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "adapters/a2a"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}

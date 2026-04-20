@@ -1,0 +1,66 @@
+{
+  "schema": "voidly-pay-network-health/v1",
+  "generated_at": "2026-04-20T06:19:34.960Z",
+  "run_id": "24651522203",
+  "run_url": "https://github.com/voidly-ai/voidly-pay/actions/runs/24651522203",
+  "health": {
+    "ok": true,
+    "system_frozen": false,
+    "latency_ms": 654,
+    "counts": {
+      "wallets": 37,
+      "transfers_settled_24h": 1,
+      "active_admin_keys": 1
+    }
+  },
+  "stats_summary": {
+    "wallets": 37,
+    "active_capabilities": 16,
+    "distinct_providers": 3,
+    "hires_total": 179,
+    "hires_completed": 169,
+    "value_settled_cr": 0.7442
+  },
+  "providers": [
+    {
+      "did": "did:voidly:AsAVzZ2dtMrntgGRco8KkW",
+      "capability": "hash.sha256",
+      "capability_id": "e00a3caf-5090-4414-aab9-89e5420bf871",
+      "price_micro": 800,
+      "status": "ok",
+      "receipt_state": "pending_acceptance",
+      "receipt_id": "c10dfe61-c899-496e-8754-e6904a69b4ef",
+      "accepted": true,
+      "verified": true,
+      "latency_ms": 6817
+    },
+    {
+      "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
+      "capability": "hash.sha256",
+      "capability_id": "1b32805f-07e0-426e-a7a2-53ac41396303",
+      "price_micro": 1000,
+      "status": "ok",
+      "receipt_state": "pending_acceptance",
+      "receipt_id": "2bb5dd64-5ba7-4112-8a2f-3df6ef05896a",
+      "accepted": true,
+      "verified": true,
+      "latency_ms": 6816
+    },
+    {
+      "did": "did:voidly:mkt-b-1776622972",
+      "capability": "translate",
+      "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
+      "price_micro": 500000,
+      "status": "hire_failed",
+      "error": "hire 31a026a3-0ea1-42f1-9ee2-9bf44e23055a did not reach claimed state (got requested)",
+      "latency_ms": 61507
+    }
+  ],
+  "ok": false,
+  "summary": {
+    "providers_probed": 3,
+    "providers_ok": 2,
+    "providers_failing": 1,
+    "success_rate": 0.6666666666666666
+  }
+}

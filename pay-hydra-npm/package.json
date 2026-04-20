@@ -1,0 +1,47 @@
+{
+  "name": "@voidly/pay-hydra",
+  "version": "1.0.1",
+  "description": "Voidly Pay Hydra — one-command bootstrap of a self-hosted provider on the agent payment marketplace. Generates DID, funds via faucet, publishes a capability, joins the federation index.",
+  "keywords": [
+    "voidly",
+    "voidly-pay",
+    "hydra",
+    "agent-payments",
+    "ai-agents",
+    "marketplace",
+    "self-hosting",
+    "ed25519",
+    "decentralized"
+  ],
+  "type": "module",
+  "bin": {
+    "voidly-hydra": "./bin/cli.js",
+    "pay-hydra": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/cli.js"
+  },
+  "dependencies": {
+    "@voidly/pay-sdk": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Voidly Research <research@voidly.ai>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "pay-hydra-npm"
+  },
+  "homepage": "https://voidly.ai/pay/federation"
+}

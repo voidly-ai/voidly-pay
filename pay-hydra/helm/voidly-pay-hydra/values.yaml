@@ -1,0 +1,112 @@
+# Default values for voidly-pay-hydra.
+
+image:
+  repository: voidly/pay-hydra
+  # Pin a tag rather than follow :latest so a bad upstream release
+  # doesn't roll out fleet-wide on any pod restart. Bump in your values
+  # override when you're ready.
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+# Each replica gets its own DID via its own PVC. Set >1 only when you
+# want multiple independent Hydra nodes under one release (they will
+# publish the same capability + price from the same values; for a
+# per-replica capability matrix use the per-release pattern in the
+# README's multi-release example).
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 384Mi
+
+# Hydra configuration. The npm CLI (>=1.0.1) reads these env vars on boot.
+hydra:
+  api: https://api.voidly.ai
+  capability: hash.sha256
+  priceCredits: 0.0005
+  slaHours: 1
+  port: 8420
+  # Baked into the /.well-known/agent-card.json `url` field. Set this to
+  # your ingress hostname so federation crawlers can actually reach the
+  # card they index. Leave empty to fall back to "http://0.0.0.0:<port>"
+  # (useful only for localhost / test debugging).
+  externalUrl: ""
+
+probe:
+  # Node boot + npm init + faucet can be slow on cold clusters; padded
+  # accordingly. `startupProbe` lets us give the slow-start a long leash
+  # without loosening the ongoing liveness check.
+  startup:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    failureThreshold: 30   # 30 * 5 s = 150 s grace to first healthz OK
+  liveness:
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    failureThreshold: 6
+  readiness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+persistence:
+  enabled: true
+  size: 100Mi
+  storageClass: ""           # "" = cluster default. If your cluster has no default SC, set it explicitly or the PVC will stay Pending.
+  accessModes: [ReadWriteOnce]
+
+service:
+  type: ClusterIP
+  port: 8420
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: hydra.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Pod-level security context.
+securityContext:
+  runAsUser: 10001
+  runAsGroup: 10001
+  runAsNonRoot: true
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+# Container-level — mirrors the restrictive posture into the container
+# spec so Pod Security Standards "restricted" admission passes.
+containerSecurityContext:
+  runAsNonRoot: true
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: [ALL]
+  seccompProfile:
+    type: RuntimeDefault
+
+# Hydra never talks to the Kubernetes API. Don't mount its SA token.
+automountServiceAccountToken: false
+
+# Optional NetworkPolicy restricting egress to the Voidly Pay API.
+# Not enabled by default — too easy to misconfigure on clusters without
+# Calico/Cilium/etc.; enable when you know what you're doing.
+networkPolicy:
+  enabled: false
+  # Egress allow-list if enabled. DNS is always allowed.
+  egressHosts:
+    - api.voidly.ai
+
+nodeSelector: {}
+tolerations: []
+# When replicaCount > 1, a soft podAntiAffinity spreads replicas across
+# nodes. Override `affinity` to tighten or loosen.
+affinity: {}

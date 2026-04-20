@@ -1,0 +1,103 @@
+name: Voidly Pay Public Probe
+
+# Runs hourly (and on-demand) against the live production API. Generates
+# a fresh DID, claims the faucet, searches for a provider, hires them,
+# verifies the returned hash locally, and accepts or disputes. This is a
+# PUBLIC demonstration that the autonomous agent-to-agent flow works
+# end-to-end — every run appears in the Actions tab for anyone to inspect.
+#
+# Runs against production via the published @voidly/pay-sdk npm package.
+# No repository secrets or credentials needed — a fresh DID is generated
+# each run.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"  # every hour at :17
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install @voidly/pay-sdk
+        run: |
+          mkdir -p /tmp/probe && cd /tmp/probe
+          npm init -y >/dev/null
+          npm install --silent --no-audit --no-fund @voidly/pay-sdk@latest
+
+      - name: Claim faucet + hire + verify + accept
+        run: |
+          cat > /tmp/probe/run.mjs <<'EOF'
+          import { VoidlyPay, generateKeyPair, sha256Hex } from '@voidly/pay-sdk';
+
+          // Fresh DID every run — public demonstration agent.
+          const kp = generateKeyPair();
+          console.log('[probe] fresh DID:', kp.did);
+
+          // Note: this DID is not registered with the relay's agent_identities.
+          // The probe sends signed faucet/hire envelopes and relies on the
+          // worker running a lookup — see the README for why we register
+          // below.
+
+          const res = await fetch('https://api.voidly.ai/v1/agent/register', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              name: `pay-probe-ci-${Date.now()}`,
+              signing_public_key: kp.publicKeyBase64,
+              encryption_public_key: kp.publicKeyBase64,
+            }),
+          });
+          console.log('[probe] relay-register HTTP:', res.status);
+
+          const pay = new VoidlyPay({
+            did: kp.did,
+            secretBase64: kp.secretKeyBase64,
+          });
+
+          await pay.ensureWallet();
+          const f = await pay.faucet();
+          console.log('[probe] faucet ok:', f.ok, 'balance:', f.new_balance_micro);
+
+          const hits = await pay.capabilitySearch({ capability: 'hash.sha256', limit: 5 });
+          if (!hits.length) {
+            console.error('[probe] no hash.sha256 providers found — aborting');
+            process.exit(0);  // non-fatal: dependent on live marketplace
+          }
+          console.log('[probe] found', hits.length, 'providers, picking cheapest:', hits[0].did, '@', hits[0].price_per_call_micro);
+
+          const trust = await pay.trust(hits[0].did);
+          console.log('[probe] provider completion_rate:', trust.as_provider.completion_rate);
+
+          const text = `GitHub Actions public probe ${new Date().toISOString()} — run ${process.env.GITHUB_RUN_NUMBER}`;
+          const expected = await sha256Hex(text);
+          console.log('[probe] hiring with input.text="' + text + '" expected sha256=' + expected.slice(0,16) + '…');
+
+          const result = await pay.hireAndWait({
+            capabilityId: hits[0].id,
+            input: { text },
+            deliveryDeadlineHours: 1,
+            pollIntervalMs: 2000,
+            timeoutMs: 90_000,
+            verify: (summary) => summary === expected,
+          });
+
+          console.log('[probe] hire state:', result.hire.state);
+          console.log('[probe] receipt state:', result.receipt.state);
+          console.log('[probe] returned:', result.receipt.summary);
+          console.log('[probe] accepted:', result.accepted, 'escrow_released:', result.escrow_released);
+
+          if (!result.accepted) {
+            console.error('[probe] ✗ provider returned wrong hash — disputed');
+            process.exit(2);
+          }
+          console.log('[probe] ✓ autonomous agent-to-agent work completed correctly on production');
+          EOF
+          node /tmp/probe/run.mjs

@@ -1,0 +1,58 @@
+name: Voidly Pay HF Dataset Snapshot
+
+# Uploads a daily snapshot of the Voidly Pay marketplace stats to
+# huggingface.co/datasets/emperor-mew/voidly-pay-marketplace-snapshots.
+# Builds a continuous public record of the autonomous agent economy.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily at 02:17 UTC — off-peak for our infra.
+    - cron: "17 2 * * *"
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install huggingface_hub
+        run: pip install --quiet huggingface_hub requests
+
+      - name: Fetch + upload snapshot
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json, os, datetime, requests
+          from huggingface_hub import HfApi
+
+          stats = requests.get("https://api.voidly.ai/v1/pay/stats", timeout=30).json()
+          today = datetime.datetime.utcnow().strftime("%Y-%m-%d")
+          payload = {
+              "snapshot_at": stats.get("generated_at"),
+              "snapshot_date": today,
+              "stats": stats,
+              "_source": "https://api.voidly.ai/v1/pay/stats",
+          }
+          path = f"/tmp/snapshot-{today}.json"
+          with open(path, "w") as f:
+              json.dump(payload, f, indent=2)
+
+          api = HfApi(token=os.environ.get("HF_TOKEN"))
+          api.upload_file(
+              path_or_fileobj=path,
+              path_in_repo=f"snapshots/{today}.json",
+              repo_id="emperor-mew/voidly-pay-marketplace-snapshots",
+              repo_type="dataset",
+              commit_message=f"Snapshot {today}",
+          )
+          print(f"✓ uploaded snapshot {today}: {stats['hires']['total']} hires, "
+                f"{stats['hires']['total_completed']} completed, "
+                f"{stats['value_settled']['total_micro']/1e6:.4f} credits settled")
+          PY

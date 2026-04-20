@@ -1,0 +1,7 @@
+{
+  "schema": "voidly-pay-stale/v1",
+  "updated_at": "2026-04-20T00:00:00Z",
+  "status": "seeded",
+  "capabilities": {},
+  "summary": { "total_tracked": 0, "currently_stale": 0 }
+}

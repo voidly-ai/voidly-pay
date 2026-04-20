@@ -1,0 +1,29 @@
+{
+  "name": "voidly-pay-hydra",
+  "version": "1.0.0",
+  "description": "Self-replicating Voidly Pay provider bootstrap. One command brings up a new DID + funded wallet + published capability + federation listing.",
+  "type": "module",
+  "main": "agent.js",
+  "bin": {
+    "voidly-hydra": "./bootstrap.sh"
+  },
+  "scripts": {
+    "start": "node agent.js"
+  },
+  "dependencies": {
+    "@voidly/pay-sdk": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "pay-hydra"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}

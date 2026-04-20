@@ -1,0 +1,40 @@
+[Unit]
+Description=Voidly Pay Showcase Watchdog
+Documentation=https://voidly.ai/pay/network-health
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /opt/voidly-showcase-watchdog/agent.js
+EnvironmentFile=/opt/voidly-showcase-watchdog/.env
+WorkingDirectory=/opt/voidly-showcase-watchdog
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# The watchdog needs to exec `systemctl restart` on sibling services,
+# so we run as root. All other processes touching it live in 600/.env.
+User=root
+Group=root
+
+# Hardening — the watchdog only needs to read pay API + restart other
+# systemd units. No filesystem writes except our own state + log.
+ProtectSystem=strict
+ReadWritePaths=/var/lib/voidly-watchdog /var/log/voidly-watchdog.log
+ProtectHome=true
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

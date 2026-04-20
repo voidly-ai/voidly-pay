@@ -1,0 +1,28 @@
+# Rename to terraform.tfvars (or export DIGITALOCEAN_TOKEN in env) before `terraform apply`.
+
+# Required: a token from https://cloud.digitalocean.com/account/api/tokens
+do_token = "dop_v1_CHANGEME"
+
+# Optional overrides
+# region               = "nyc3"
+# droplet_size         = "s-1vcpu-1gb"   # ~$4/mo
+# hydra_capability     = "hash.sha256"
+# hydra_price_credits  = 0.0005
+# hydra_sla_hours      = 1
+# hydra_version        = "^1.0.0"        # pin @voidly/pay-hydra npm semver
+
+# Strongly recommended: preinstall your SSH keys so you can back up
+# /opt/voidly-hydra/keys/active.json. Fingerprints at:
+# https://cloud.digitalocean.com/account/security
+# ssh_key_fingerprints = ["aa:bb:cc:...:99"]
+
+# Scope SSH to your own IP. Leave empty (default) to close :22 entirely —
+# the provider loop + agent card don't need inbound SSH to function.
+# operator_ip_cidrs    = ["1.2.3.4/32"]
+
+# OPTIONAL — back up the Hydra DID key to a local file after first boot.
+# Requires BOTH ssh_key_fingerprints + operator_ip_cidrs to be set (so
+# Terraform can SCP the key out). Mode 0600 on the local copy.
+# If you lose this file AND the droplet is destroyed, the DID is gone.
+# key_backup_path      = "~/hydra-keys/${local.region}-active.json"
+# ssh_private_key_path = "~/.ssh/id_ed25519"

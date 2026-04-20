@@ -1,0 +1,38 @@
+[Unit]
+Description=Voidly Pay Hydra provider
+Documentation=https://voidly.ai/pay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node __SCRIPT_DIR__/agent.js
+EnvironmentFile=__HYDRA_HOME__/.env
+WorkingDirectory=__HYDRA_HOME__
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Hardening — the Hydra agent only needs network out + its key file.
+User=nobody
+Group=nogroup
+
+ProtectSystem=strict
+ReadWritePaths=__HYDRA_HOME__
+ProtectHome=true
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

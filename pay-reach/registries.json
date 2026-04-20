@@ -1,0 +1,91 @@
+{
+  "schema": "voidly-pay-registries/v1",
+  "updated_at": "2026-04-20T00:00:00Z",
+  "principles": [
+    "We only list ourselves in registries that explicitly accept third-party submissions.",
+    "We never spam, auto-submit, impersonate, or inject listings into aggregators that don't invite them.",
+    "Every row below documents the registry's published submission policy + our current listing status."
+  ],
+  "registries": [
+    {
+      "name": "npm",
+      "url": "https://www.npmjs.com",
+      "policy": "public registry, authors publish their own packages",
+      "listings": [
+        { "package": "@voidly/pay-sdk",     "status": "published" },
+        { "package": "@voidly/pay-cli",     "status": "published" },
+        { "package": "@voidly/mcp-server",  "status": "published" },
+        { "package": "@voidly/agent-sdk",   "status": "published" },
+        { "package": "@voidly/pay-hydra",   "status": "pending publish (user ack)" },
+        { "package": "@voidly/pay-vercel-ai", "status": "pending publish (user ack)" }
+      ]
+    },
+    {
+      "name": "PyPI",
+      "url": "https://pypi.org",
+      "policy": "public registry, authors publish their own packages",
+      "listings": [
+        { "package": "voidly-pay",             "status": "published" },
+        { "package": "voidly-pay-langchain",   "status": "pending publish (user ack)" },
+        { "package": "voidly-pay-crewai",      "status": "pending publish (user ack)" },
+        { "package": "voidly-pay-autogen",     "status": "pending publish (user ack)" },
+        { "package": "voidly-pay-llamaindex",  "status": "pending publish (user ack)" }
+      ]
+    },
+    {
+      "name": "HuggingFace",
+      "url": "https://huggingface.co",
+      "policy": "own-account hosting; spaces + datasets + collections",
+      "listings": [
+        { "resource": "Space — voidly-pay-marketplace", "status": "published" },
+        { "resource": "Dataset — voidly-pay-stats (daily snapshot)", "status": "published" },
+        { "resource": "Collection — voidly-ai-agent-infrastructure", "status": "published" }
+      ]
+    },
+    {
+      "name": "ClawHub",
+      "url": "https://clawhub.ai",
+      "policy": "own-account submission; MIT-licensed skills welcomed",
+      "listings": [
+        { "resource": "skill — voidly-agent-relay", "status": "published v1.0.11" },
+        { "resource": "skill — voidly-pay",         "status": "published" }
+      ]
+    },
+    {
+      "name": "awesome-mcp-servers",
+      "url": "https://github.com/punkpeye/awesome-mcp-servers",
+      "policy": "accepts PRs",
+      "listings": [
+        { "entry": "@voidly/mcp-server", "status": "PR #5130 (submitted)" }
+      ]
+    },
+    {
+      "name": "awesome-ai-agents",
+      "url": "https://github.com/e2b-dev/awesome-ai-agents",
+      "policy": "accepts PRs",
+      "listings": [
+        { "entry": "Voidly Pay", "status": "PR #825 (submitted)" }
+      ]
+    },
+    {
+      "name": "GitHub code search",
+      "url": "https://github.com/search",
+      "policy": "public — no submission needed, code indexed when public",
+      "note": "Full source of SDK, adapters, and Hydra is in voidly-ai/voidly-pay; repo is currently private"
+    },
+    {
+      "name": "A2A registries (community-run)",
+      "url": "https://github.com/google/A2A",
+      "policy": "A2A spec does not itself provide a central registry; federation is pull-only via /.well-known/agent-card.json",
+      "listings": [
+        { "entry": "voidly.ai/.well-known/agent-card.json", "status": "published" },
+        { "entry": "api.voidly.ai/.well-known/agent-card.json", "status": "published" }
+      ]
+    }
+  ],
+  "will_not_do": [
+    "Auto-submit to aggregators that don't welcome third-party listings.",
+    "Use any SEO / ranking-gaming technique not documented in the aggregator's guidelines.",
+    "Create fake user accounts, sockpuppet profiles, or astroturf community threads."
+  ]
+}

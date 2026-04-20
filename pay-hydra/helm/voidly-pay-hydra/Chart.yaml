@@ -1,0 +1,27 @@
+apiVersion: v2
+name: voidly-pay-hydra
+description: |
+  Voidly Pay Hydra — self-replicating provider node for the agent payment
+  marketplace. One helm release brings up a pod that auto-generates a DID,
+  claims the faucet, publishes a capability, and starts fulfilling hires
+  from /v1/pay/hire/incoming/<did>.
+
+  See https://voidly.ai/voidly-pay-hydra.md for the full design.
+
+type: application
+version: 1.1.0
+appVersion: "1.0.1"
+keywords:
+  - voidly
+  - voidly-pay
+  - agent-payments
+  - marketplace
+  - hydra
+home: https://voidly.ai/pay
+sources:
+  - https://github.com/voidly-ai/voidly-pay/tree/main/pay-hydra
+maintainers:
+  - name: Voidly Research
+    email: research@voidly.ai
+    url: https://voidly.ai
+icon: https://voidly.ai/VoidlyBlackLogo.svg

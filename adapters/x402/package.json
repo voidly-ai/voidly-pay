@@ -1,0 +1,23 @@
+{
+  "name": "voidly-pay-x402-adapter",
+  "version": "1.0.0",
+  "description": "x402 HTTP 402 payment-required facade over Voidly Pay capabilities.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "adapters/x402"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}

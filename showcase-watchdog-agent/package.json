@@ -1,0 +1,26 @@
+{
+  "name": "voidly-showcase-watchdog-agent",
+  "version": "1.0.0",
+  "description": "Continuous watchdog for the Voidly Pay showcase fleet. Probes every provider every minute, alerts on failure, auto-restarts dead systemd services.",
+  "type": "module",
+  "main": "agent.js",
+  "scripts": {
+    "start": "node agent.js"
+  },
+  "dependencies": {
+    "@voidly/pay-sdk": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "showcase-watchdog-agent"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}

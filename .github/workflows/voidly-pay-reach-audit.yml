@@ -1,0 +1,134 @@
+name: Voidly Pay Reach Audit
+
+# Weekly: verify our listings are still present in the public agent-registry
+# directories we've cross-posted to. Doesn't try to push or republish —
+# just verifies that the links still resolve, writes a status file, commits.
+#
+# If a registry has delisted us, the status JSON flags it and a human
+# (or a future auto-PR) can repair.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "42 7 * * 1"  # Monday 07:42 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voidly-pay-reach-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Audit registries + package presence
+        run: |
+          mkdir -p pay-reach landing/public/pay-reach
+          cat > /tmp/audit.mjs <<'EOF'
+          import { writeFileSync } from 'node:fs'
+          const UA = { 'User-Agent': 'voidly-pay-reach-audit/1.0 (+https://voidly.ai/pay)' }
+
+          // Each entry: name, url, match (regex that must appear in response body)
+          const TARGETS = [
+            { name: 'npm @voidly/pay-sdk',     url: 'https://registry.npmjs.org/@voidly/pay-sdk',     match: /voidly/i },
+            { name: 'npm @voidly/mcp-server',  url: 'https://registry.npmjs.org/@voidly/mcp-server',  match: /voidly/i },
+            { name: 'npm @voidly/pay-cli',     url: 'https://registry.npmjs.org/@voidly/pay-cli',     match: /voidly/i },
+            { name: 'npm @voidly/agent-sdk',   url: 'https://registry.npmjs.org/@voidly/agent-sdk',   match: /voidly/i },
+            { name: 'pypi voidly-pay',         url: 'https://pypi.org/pypi/voidly-pay/json',          match: /voidly/i },
+            { name: 'HF Space — marketplace',  url: 'https://huggingface.co/spaces/emperor-mew/voidly-pay-marketplace', match: /voidly/i },
+            { name: 'HF Dataset — daily snap', url: 'https://huggingface.co/datasets/emperor-mew/voidly-pay-stats',     match: /voidly/i },
+            { name: 'HF Collection',           url: 'https://huggingface.co/collections/emperor-mew/voidly-ai-agent-infrastructure-69e538d5a7a00f6b902bfc9b', match: /voidly/i },
+            { name: 'ClawHub skill voidly-pay', url: 'https://clawhub.ai/s/voidly-pay',                match: /voidly/i },
+            { name: 'voidly.ai /pay live',     url: 'https://voidly.ai/pay',                          match: /voidly pay/i },
+            { name: 'api.voidly.ai /pay/manifest', url: 'https://api.voidly.ai/v1/pay/manifest.json', match: /voidly-pay-manifest/i },
+            { name: 'voidly.ai agent-card',    url: 'https://voidly.ai/.well-known/agent-card.json',  match: /voidly/i },
+          ]
+
+          const report = {
+            schema: 'voidly-pay-reach/v1',
+            generated_at: new Date().toISOString(),
+            run_id: process.env.GITHUB_RUN_ID || null,
+            surfaces: [],
+          }
+
+          for (const t of TARGETS) {
+            const row = { name: t.name, url: t.url, checked_at: new Date().toISOString() }
+            try {
+              const t0 = Date.now()
+              const res = await fetch(t.url, { headers: UA, signal: AbortSignal.timeout(15_000) })
+              row.status = res.status
+              row.latency_ms = Date.now() - t0
+              row.ok = false
+              if (!res.ok) { row.error = `HTTP ${res.status}`; }
+              else {
+                const body = await res.text()
+                row.ok = t.match.test(body)
+                if (!row.ok) row.error = 'content match failed'
+                // Extract useful metadata where available.
+                if (t.url.startsWith('https://registry.npmjs.org/')) {
+                  try {
+                    const j = JSON.parse(body)
+                    row.version = j['dist-tags']?.latest
+                    row.last_modified = j.time?.modified
+                  } catch {}
+                }
+                if (t.url.startsWith('https://pypi.org/pypi/')) {
+                  try {
+                    const j = JSON.parse(body)
+                    row.version = j.info?.version
+                  } catch {}
+                }
+              }
+            } catch (e) {
+              row.ok = false
+              row.error = String(e.message || e).slice(0, 240)
+            }
+            report.surfaces.push(row)
+          }
+          const ok_count = report.surfaces.filter(s => s.ok).length
+          report.summary = {
+            surfaces_total: report.surfaces.length,
+            surfaces_ok: ok_count,
+            surfaces_failing: report.surfaces.length - ok_count,
+            success_rate: ok_count / report.surfaces.length,
+          }
+
+          const body = JSON.stringify(report, null, 2)
+          writeFileSync('pay-reach/latest.json', body)
+          writeFileSync('landing/public/pay-reach/latest.json', body)
+          const stamp = new Date().toISOString().slice(0, 10)
+          writeFileSync(`pay-reach/history/${stamp}.json`, body)
+
+          console.log(`Reach audit: ${ok_count}/${report.surfaces.length} surfaces OK`)
+          EOF
+          mkdir -p pay-reach/history
+          node /tmp/audit.mjs
+
+      - name: Commit reach audit
+        run: |
+          git config user.name  "voidly-pay-reach[bot]"
+          git config user.email "voidly-pay-reach@users.noreply.github.com"
+          git add pay-reach/latest.json pay-reach/history/ landing/public/pay-reach/latest.json
+          if git diff --cached --quiet; then
+            echo "No reach changes to commit"
+          else
+            git commit -m "pay-reach: $(date -u +'%Y-%m-%d') weekly surface audit"
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push origin main && break
+              sleep $((RANDOM % 10 + 5))
+            done
+          fi

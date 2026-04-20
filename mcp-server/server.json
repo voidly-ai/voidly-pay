@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.voidly-ai/mcp-server",
+  "description": "93 tools: Voidly Sentinel (trust-wrapped shutdown early warning with conformal intervals + SHAP + evidence permalinks), censorship intelligence across 200 countries (19.6M measurements), E2E encrypted agent-to-agent messaging (Double Ratchet, X3DH, post-quantum).",
+  "repository": {
+    "url": "https://github.com/voidly-ai/mcp-server",
+    "source": "github"
+  },
+  "version": "2.11.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@voidly/mcp-server",
+      "version": "2.11.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SENTINEL_ADMIN_KEY",
+          "description": "Operator admin key for Voidly Sentinel's report_miss endpoint. Grants the ability to write to the error_queue for model retrain. Omit unless you're an operator.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "VOIDLY_SENTINEL_KEY",
+          "description": "Registered-subscriber HMAC secret for Voidly Sentinel's report_miss endpoint. Alternative to SENTINEL_ADMIN_KEY for non-admin agents with a subscription.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

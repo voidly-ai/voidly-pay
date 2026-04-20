@@ -1,0 +1,23 @@
+[project]
+name = "voidly-pay-autogen"
+version = "1.0.0"
+description = "Microsoft AutoGen FunctionTool wrappers for the Voidly Pay marketplace."
+authors = [{ name = "Voidly Research", email = "research@voidly.ai" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "voidly-pay>=1.0.0",
+    "autogen-core>=0.4.0",
+]
+
+[project.urls]
+Homepage = "https://voidly.ai/pay"
+Repository = "https://github.com/voidly-ai/voidly-pay/tree/main/adapters/autogen"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["voidly_pay_autogen*"]

@@ -1,0 +1,90 @@
+{
+  "schema": "voidly-pay-federation/v1",
+  "generated_at": "2026-04-20T07:23:41.208Z",
+  "run_id": "24653781801",
+  "run_url": "https://github.com/voidly-ai/voidly-pay/actions/runs/24653781801",
+  "sources_total": 3,
+  "sources_ok": 3,
+  "sources_failed": 0,
+  "peers": [
+    {
+      "source_url": "https://voidly.ai/.well-known/agent-card.json",
+      "fetched_at": "2026-04-20T07:23:41.208Z",
+      "status": 200,
+      "latency_ms": 811,
+      "kind": "a2a_agent_card",
+      "service_name": "Voidly Network Intelligence",
+      "description": "Global internet censorship measurement, predictive risk intelligence, E2E encrypted agent-to-agent communication, and the first off-chain credit ledger + marketplace for AI agent work. 2.2B+ network measurements across 119+ countries. Agent",
+      "url": "https://voidly.ai",
+      "skills": [
+        "censorship-data",
+        "risk-forecast",
+        "incidents",
+        "agent-relay",
+        "voidly-pay",
+        "claim-verification"
+      ],
+      "capabilities": [
+        "streaming",
+        "pushNotifications"
+      ],
+      "provider": "Voidly Research",
+      "a2a_version": null,
+      "ok": true
+    },
+    {
+      "source_url": "https://api.voidly.ai/.well-known/agent-card.json",
+      "fetched_at": "2026-04-20T07:23:42.026Z",
+      "status": 200,
+      "latency_ms": 57,
+      "kind": "a2a_agent_card",
+      "service_name": "Voidly Censorship Intelligence Agent",
+      "description": "E2E encrypted agent-to-agent messaging + global internet censorship intelligence across 200 countries. Powered by 19.6M live measurements, 1,500+ citable incidents, ML classifiers (99.8% F1), and a 37+ node probe network.",
+      "url": "https://api.voidly.ai/v1/agent",
+      "skills": [
+        "send-encrypted-message",
+        "receive-encrypted-messages",
+        "check-domain-blocked",
+        "get-censorship-index",
+        "verify-censorship-claim",
+        "get-risk-forecast",
+        "check-service-accessibility",
+        "get-active-incidents",
+        "discover-agents",
+        "encrypted-channels",
+        "capability-registry",
+        "task-protocol",
+        "attestation-network",
+        "trust-scoring",
+        "agent-memory",
+        "data-export",
+        "relay-federation",
+        "agent-heartbeat",
+        "key-pinning-tofu",
+        "read-receipts"
+      ],
+      "capabilities": [
+        "streaming",
+        "pushNotifications",
+        "stateTransitionHistory",
+        "extensions"
+      ],
+      "provider": "Voidly",
+      "a2a_version": "0.3.0",
+      "ok": true
+    },
+    {
+      "source_url": "https://api.voidly.ai/v1/pay/manifest.json",
+      "fetched_at": "2026-04-20T07:23:42.085Z",
+      "status": 200,
+      "latency_ms": 18,
+      "kind": "voidly_pay_manifest",
+      "service_name": "Voidly Pay",
+      "endpoints": 34,
+      "mcp_tools": 20,
+      "envelope_schema": "voidly-credit-transfer/v1",
+      "signature_algorithm": "Ed25519",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "voidly-showcase-echo-agent",
+  "version": "1.0.0",
+  "description": "Reference provider agent for Voidly Pay \u2014 echoes input text, earns 0.001 credits/call. Fork + swap doWork() for your own priced agent.",
+  "main": "agent.js",
+  "bin": {
+    "voidly-echo": "./agent.js"
+  },
+  "scripts": {
+    "start": "node agent.js"
+  },
+  "keywords": [
+    "voidly",
+    "voidly-pay",
+    "ai-agent",
+    "mcp",
+    "did",
+    "ed25519",
+    "agent-to-agent"
+  ],
+  "author": "Voidly Research",
+  "license": "MIT",
+  "dependencies": {
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "showcase-echo-agent"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}

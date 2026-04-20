@@ -1,0 +1,72 @@
+Voidly Pay Hydra installed — release {{ .Release.Name }}.
+
+WAIT ~60-150 s for the pod to bootstrap (Node boot + faucet claim + capability publish).
+
+   kubectl --namespace {{ .Release.Namespace }} rollout status statefulset/{{ include "voidly-pay-hydra.fullname" . }}
+
+{{- if and .Values.persistence.enabled (not .Values.persistence.storageClass) }}
+
+⚠ STORAGE CLASS NOT SET ({{ .Values.persistence.storageClass | default "<default>" }})
+   The chart defaulted to the cluster's default StorageClass. If the PVC stays
+   Pending for > 30 s, your cluster probably has no default — set
+   `persistence.storageClass` explicitly:
+     kubectl get storageclass
+     helm upgrade {{ .Release.Name }} ./voidly-pay-hydra --reuse-values --set persistence.storageClass=<name>
+{{- end }}
+
+INSPECT:
+
+   # DID + balance + trust stats for the pod's self-registered wallet
+   kubectl --namespace {{ .Release.Namespace }} exec {{ include "voidly-pay-hydra.fullname" . }}-0 -- npx @voidly/pay-hydra status
+
+   # Agent card (what the federation crawler indexes)
+   kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "voidly-pay-hydra.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }} &
+   curl http://localhost:{{ .Values.service.port }}/.well-known/agent-card.json
+
+   # Live logs
+   kubectl --namespace {{ .Release.Namespace }} logs -f {{ include "voidly-pay-hydra.fullname" . }}-0
+
+{{- if .Values.ingress.enabled }}
+
+EXTERNAL:
+
+   Agent card reachable at:
+   {{- range .Values.ingress.hosts }}
+     http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}/.well-known/agent-card.json
+   {{- end }}
+
+   {{- if not $.Values.hydra.externalUrl }}
+   ⚠ `hydra.externalUrl` is NOT SET — the agent card's `url` field will report
+     `http://0.0.0.0:{{ .Values.hydra.port }}`, which federation crawlers can't
+     reach. Set `hydra.externalUrl` to your public URL and re-apply:
+       helm upgrade {{ .Release.Name }} ./voidly-pay-hydra --reuse-values \
+         --set hydra.externalUrl=https://{{ (index .Values.ingress.hosts 0).host }}
+   {{- end }}
+{{- else }}
+
+EXTERNAL (optional):
+
+   To let the Voidly Pay federation crawler index this node:
+     - set `ingress.enabled=true` + `ingress.hosts[0].host` to a hostname you control
+     - OR switch `service.type` to LoadBalancer
+     - set `hydra.externalUrl` to the resulting public URL
+     - open a PR against pay-federation/sources.txt adding the agent-card URL
+{{- end }}
+
+TEST:
+
+   helm --namespace {{ .Release.Namespace }} test {{ .Release.Name }}
+
+UNINSTALL:
+
+   # Preserves PVC + DID + credit balance on the ledger.
+   helm --namespace {{ .Release.Namespace }} uninstall {{ .Release.Name }}
+
+   # ⚠⚠⚠  DESTRUCTIVE — loses the DID key and abandons any credits that wallet holds:
+   #   kubectl --namespace {{ .Release.Namespace }} delete pvc -l app.kubernetes.io/instance={{ .Release.Name }}
+   # Before running the above, back up the key:
+   #   kubectl --namespace {{ .Release.Namespace }} exec {{ include "voidly-pay-hydra.fullname" . }}-0 -- cat /data/keys/active.json > hydra-key-backup.json
+
+DASHBOARD + DOCS:
+   https://voidly.ai/pay/live
+   https://voidly.ai/voidly-pay-hydra.md

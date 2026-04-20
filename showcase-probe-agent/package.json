@@ -1,0 +1,38 @@
+{
+  "name": "voidly-showcase-probe-agent",
+  "version": "1.0.0",
+  "description": "Autonomous requester agent for Voidly Pay \u2014 bootstraps via faucet, hires providers, verifies work, rates them. Proof-of-autonomy for the marketplace.",
+  "main": "agent.js",
+  "bin": {
+    "voidly-probe": "./agent.js"
+  },
+  "scripts": {
+    "start": "node agent.js"
+  },
+  "keywords": [
+    "voidly",
+    "voidly-pay",
+    "ai-agent",
+    "marketplace",
+    "autonomous",
+    "quality-probe"
+  ],
+  "author": "Voidly Research",
+  "license": "MIT",
+  "dependencies": {
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "showcase-probe-agent"
+  },
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}

@@ -1,0 +1,162 @@
+name: Voidly Pay Federation Crawl
+
+# Daily (and on-demand): fetch every URL in pay-federation/sources.txt,
+# validate the response against known agent-card / Pay-manifest schemas,
+# record a normalized peer entry in pay-federation/peers.json, and commit
+# the changes back. Every run also writes a dated snapshot under
+# pay-federation/history/ so drops and adds are auditable.
+#
+# This is a "pull, don't push" federation model: we only record peers
+# who've already published their card publicly. No attempt to contact,
+# register, or import anything they haven't opted into by making their
+# card world-readable.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 6 * * *"  # daily 06:37 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: voidly-pay-federation-crawl
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch + validate every peer
+        run: |
+          mkdir -p pay-federation/history landing/public/pay-federation
+          cat > /tmp/crawl.mjs <<'EOF'
+          import { readFileSync, writeFileSync } from 'node:fs'
+
+          const sourcesRaw = readFileSync('pay-federation/sources.txt', 'utf8')
+          const sources = sourcesRaw
+            .split('\n')
+            .map(l => l.trim())
+            .filter(l => l && !l.startsWith('#'))
+
+          const report = {
+            schema: 'voidly-pay-federation/v1',
+            generated_at: new Date().toISOString(),
+            run_id: process.env.GITHUB_RUN_ID || null,
+            // Omit run_url — source repo is private so the link 404s.
+            run_url: null,
+            sources_total: sources.length,
+            sources_ok: 0,
+            sources_failed: 0,
+            peers: [],
+          }
+
+          for (const url of sources) {
+            const entry = { source_url: url, fetched_at: new Date().toISOString() }
+            try {
+              const t0 = Date.now()
+              const res = await fetch(url, {
+                signal: AbortSignal.timeout(15_000),
+                headers: { 'User-Agent': 'voidly-pay-federation-crawler/1.0 (+https://voidly.ai/pay/federation)' },
+              })
+              entry.status = res.status
+              entry.latency_ms = Date.now() - t0
+              if (!res.ok) {
+                entry.ok = false
+                entry.error = `HTTP ${res.status}`
+                report.sources_failed++
+                report.peers.push(entry)
+                continue
+              }
+              const body = await res.text()
+              let parsed
+              try { parsed = JSON.parse(body) } catch (e) {
+                entry.ok = false
+                entry.error = 'invalid JSON: ' + String(e).slice(0, 120)
+                report.sources_failed++
+                report.peers.push(entry)
+                continue
+              }
+
+              // Classify which schema this URL served.
+              if (parsed?.schema === 'voidly-pay-manifest/v1') {
+                entry.kind = 'voidly_pay_manifest'
+                entry.service_name = parsed.service || null
+                entry.endpoints = (parsed.endpoints || []).length
+                entry.mcp_tools = (parsed.mcp_tools || []).length
+                entry.envelope_schema = parsed.envelope_schema || null
+                entry.signature_algorithm = parsed.signature_algorithm || null
+                entry.ok = true
+              } else if (parsed?.name && (parsed?.url || parsed?.a2a_version || parsed?.protocol === 'a2a' || parsed?.protocolVersion)) {
+                entry.kind = 'a2a_agent_card'
+                entry.service_name = parsed.name
+                entry.description = (parsed.description || '').slice(0, 240) || null
+                entry.url = parsed.url || null
+                entry.skills = Array.isArray(parsed.skills) ? parsed.skills.map(s => s.id || s.name).slice(0, 20) : null
+                entry.capabilities = parsed.capabilities ? Object.keys(parsed.capabilities).slice(0, 20) : null
+                entry.provider = parsed.provider?.organization || parsed.provider?.name || null
+                entry.a2a_version = parsed.protocolVersion || parsed.a2a_version || null
+                entry.ok = true
+              } else if (Array.isArray(parsed?.agents) || Array.isArray(parsed?.services)) {
+                // Some servers list a fleet.
+                entry.kind = 'agent_fleet_listing'
+                const items = parsed.agents || parsed.services
+                entry.service_name = parsed.name || 'fleet'
+                entry.items_count = items.length
+                entry.items_sample = items.slice(0, 10).map(a => a?.name || a?.id).filter(Boolean)
+                entry.ok = true
+              } else {
+                entry.ok = false
+                entry.error = 'unrecognized schema'
+              }
+
+              if (entry.ok) report.sources_ok++
+              else report.sources_failed++
+              report.peers.push(entry)
+            } catch (e) {
+              entry.ok = false
+              entry.error = String(e).slice(0, 240)
+              report.sources_failed++
+              report.peers.push(entry)
+            }
+          }
+
+          const body = JSON.stringify(report, null, 2)
+          writeFileSync('pay-federation/peers.json', body)
+          // Mirror to landing/public so CF Pages serves it at
+          // voidly.ai/pay-federation/peers.json (repo is private;
+          // raw.githubusercontent.com would 404 on fetch).
+          writeFileSync('landing/public/pay-federation/peers.json', body)
+          const stamp = new Date().toISOString().slice(0, 10)
+          writeFileSync(`pay-federation/history/${stamp}.json`, body)
+
+          console.log(`Federation crawl: ${report.sources_ok}/${report.sources_total} peers OK`)
+          EOF
+          node /tmp/crawl.mjs
+
+      - name: Commit peer registry
+        run: |
+          git config user.name  "voidly-pay-federation[bot]"
+          git config user.email "voidly-pay-federation@users.noreply.github.com"
+          git add pay-federation/peers.json pay-federation/history/ landing/public/pay-federation/peers.json
+          if git diff --cached --quiet; then
+            echo "No federation changes to commit"
+          else
+            git commit -m "pay-federation: $(date -u +'%Y-%m-%d') daily peer snapshot"
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push origin main && break
+              sleep $((RANDOM % 10 + 5))
+            done
+          fi

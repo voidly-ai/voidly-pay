@@ -1,0 +1,24 @@
+{
+  "payload": {
+    "type": "hosted",
+    "stateful": false,
+    "hasAuthAdapter": false,
+    "serverCard": {
+      "serverInfo": {
+        "name": "voidly",
+        "version": "2.10.0"
+      },
+      "tools": [],
+      "resources": [],
+      "prompts": []
+    },
+    "source": {
+      "commit": "5b67f31c50d4386d34f1202063cdb9c9d8e58258",
+      "branch": "main"
+    }
+  },
+  "artifacts": {
+    "module": "module.js",
+    "sourcemap": "module.js.map"
+  }
+}

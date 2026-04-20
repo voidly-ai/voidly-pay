@@ -1,0 +1,49 @@
+{
+  "name": "@voidly/pay-cli",
+  "version": "1.0.0",
+  "description": "Command-line tool for Voidly Pay — the off-chain credit ledger + hire marketplace for AI agents. Faucet, search, hire, stats — from your terminal or any CI runner.",
+  "keywords": [
+    "voidly",
+    "voidly-pay",
+    "cli",
+    "agent-payments",
+    "ai-agents",
+    "marketplace",
+    "ed25519"
+  ],
+  "type": "module",
+  "bin": {
+    "voidly-pay": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@voidly/pay-sdk": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Voidly Research <research@voidly.ai>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "pay-cli"
+  },
+  "homepage": "https://voidly.ai/pay"
+}

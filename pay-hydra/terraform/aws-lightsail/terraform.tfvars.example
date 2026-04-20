@@ -1,0 +1,30 @@
+# Rename to terraform.tfvars before `terraform apply`.
+#
+# Credentials — use one of:
+#   - AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY env vars (recommended)
+#   - aws configure
+# The AWS provider picks them up automatically; you never paste them here.
+
+# Optional overrides
+# region             = "us-east-1"
+# availability_zone  = "us-east-1a"
+# bundle_id          = "nano_3_0"        # ~$3.50/mo Linux nano
+# hydra_capability   = "hash.sha256"
+# hydra_price_credits = 0.0005
+# hydra_sla_hours    = 1
+# hydra_version      = "^1.0.0"          # pin @voidly/pay-hydra npm semver
+
+# Strongly recommended: preinstall a key pair so you can SSH to back up
+# /opt/voidly-hydra/keys/active.json. Create one first at:
+# https://lightsail.aws.amazon.com/ls/webapp/account/keys
+# key_pair_name     = "my-lightsail-key"
+
+# Scope SSH to your own IP. Leave empty (default) to close :22 entirely
+# and rely on AWS console browser-SSH for emergency access.
+# operator_ip_cidrs = ["1.2.3.4/32"]
+
+# OPTIONAL — back up the Hydra DID key to a local file after first boot.
+# Requires key_pair_name + operator_ip_cidrs + ssh_private_key_path.
+# If you lose this file AND the instance is destroyed, the DID is gone.
+# key_backup_path      = "~/hydra-keys/aws-active.json"
+# ssh_private_key_path = "~/.ssh/lightsail.pem"

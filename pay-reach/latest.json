@@ -1,0 +1,119 @@
+{
+  "schema": "voidly-pay-reach/v1",
+  "generated_at": "2026-04-20T08:29:22.308Z",
+  "run_id": "24656401841",
+  "surfaces": [
+    {
+      "name": "npm @voidly/pay-sdk",
+      "url": "https://registry.npmjs.org/@voidly/pay-sdk",
+      "checked_at": "2026-04-20T08:29:22.309Z",
+      "status": 200,
+      "latency_ms": 487,
+      "ok": true,
+      "version": "1.0.1",
+      "last_modified": "2026-04-19T20:10:04.622Z"
+    },
+    {
+      "name": "npm @voidly/mcp-server",
+      "url": "https://registry.npmjs.org/@voidly/mcp-server",
+      "checked_at": "2026-04-20T08:29:22.815Z",
+      "status": 200,
+      "latency_ms": 363,
+      "ok": true,
+      "version": "2.16.0",
+      "last_modified": "2026-04-19T19:31:04.338Z"
+    },
+    {
+      "name": "npm @voidly/pay-cli",
+      "url": "https://registry.npmjs.org/@voidly/pay-cli",
+      "checked_at": "2026-04-20T08:29:23.184Z",
+      "status": 200,
+      "latency_ms": 380,
+      "ok": true,
+      "version": "1.0.0",
+      "last_modified": "2026-04-19T21:20:41.929Z"
+    },
+    {
+      "name": "npm @voidly/agent-sdk",
+      "url": "https://registry.npmjs.org/@voidly/agent-sdk",
+      "checked_at": "2026-04-20T08:29:23.565Z",
+      "status": 200,
+      "latency_ms": 483,
+      "ok": true,
+      "version": "3.5.1",
+      "last_modified": "2026-04-17T12:01:45.042Z"
+    },
+    {
+      "name": "pypi voidly-pay",
+      "url": "https://pypi.org/pypi/voidly-pay/json",
+      "checked_at": "2026-04-20T08:29:24.052Z",
+      "status": 200,
+      "latency_ms": 14,
+      "ok": true,
+      "version": "1.0.1"
+    },
+    {
+      "name": "HF Space — marketplace",
+      "url": "https://huggingface.co/spaces/emperor-mew/voidly-pay-marketplace",
+      "checked_at": "2026-04-20T08:29:24.067Z",
+      "status": 200,
+      "latency_ms": 433,
+      "ok": true
+    },
+    {
+      "name": "HF Dataset — daily snap",
+      "url": "https://huggingface.co/datasets/emperor-mew/voidly-pay-stats",
+      "checked_at": "2026-04-20T08:29:24.502Z",
+      "status": 401,
+      "latency_ms": 16,
+      "ok": false,
+      "error": "HTTP 401"
+    },
+    {
+      "name": "HF Collection",
+      "url": "https://huggingface.co/collections/emperor-mew/voidly-ai-agent-infrastructure-69e538d5a7a00f6b902bfc9b",
+      "checked_at": "2026-04-20T08:29:24.518Z",
+      "status": 200,
+      "latency_ms": 70,
+      "ok": true
+    },
+    {
+      "name": "ClawHub skill voidly-pay",
+      "url": "https://clawhub.ai/s/voidly-pay",
+      "checked_at": "2026-04-20T08:29:24.590Z",
+      "status": 200,
+      "latency_ms": 1114,
+      "ok": true
+    },
+    {
+      "name": "voidly.ai /pay live",
+      "url": "https://voidly.ai/pay",
+      "checked_at": "2026-04-20T08:29:25.706Z",
+      "status": 200,
+      "latency_ms": 202,
+      "ok": true
+    },
+    {
+      "name": "api.voidly.ai /pay/manifest",
+      "url": "https://api.voidly.ai/v1/pay/manifest.json",
+      "checked_at": "2026-04-20T08:29:25.911Z",
+      "status": 200,
+      "latency_ms": 423,
+      "ok": true
+    },
+    {
+      "name": "voidly.ai agent-card",
+      "url": "https://voidly.ai/.well-known/agent-card.json",
+      "checked_at": "2026-04-20T08:29:26.335Z",
+      "status": 200,
+      "latency_ms": 30,
+      "ok": true
+    }
+  ],
+  "summary": {
+    "surfaces_total": 12,
+    "surfaces_ok": 11,
+    "surfaces_failing": 1,
+    "success_rate": 0.9166666666666666
+  }
+}

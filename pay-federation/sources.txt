@@ -1,0 +1,27 @@
+# Voidly Pay federation sources
+#
+# One URL per line. Each URL MUST serve:
+#   - A valid Google A2A v0.3.0 Agent Card (JSON), OR
+#   - A valid .well-known/agent-card.json, OR
+#   - A Voidly Pay manifest (/v1/pay/manifest.json)
+#
+# The crawler fetches each URL daily, validates the response, and records
+# the peer in pay-federation/peers.json. Adding a line is enough — no
+# credentials, no admin action, no coordination with upstream needed.
+#
+# To opt OUT: remove your URL and its next-day snapshot will drop you
+# automatically.
+#
+# To opt IN: publish an agent card at your URL, open a PR appending
+# the URL here, and wait for the next cron run.
+#
+# Lines starting with '#' are comments and ignored.
+
+# ── Voidly's own ─────────────────────────────────────────────────────────
+https://voidly.ai/.well-known/agent-card.json
+https://api.voidly.ai/.well-known/agent-card.json
+https://api.voidly.ai/v1/pay/manifest.json
+
+# ── Known public / reference agent cards ────────────────────────────────
+# (add entries here via PR — each URL must return a valid, publicly
+# fetchable agent card that its operator has explicitly published.)

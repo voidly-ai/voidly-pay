@@ -1,0 +1,109 @@
+#cloud-config
+# Voidly Pay Hydra node bootstrap.
+# Currently tested against Ubuntu 24.04; NodeSource's deb repo is the
+# preferred install path and the whole file assumes a Debian-family base.
+# Forks for RHEL / Rocky / Alma / Fedora bases must swap the NodeSource
+# step for dnf + the corresponding RPM repo — see the issue tracker.
+#
+# Variables substituted via Terraform templatefile():
+#   ${hydra_capability}
+#   ${hydra_price_credits}
+#   ${hydra_sla_hours}
+#   ${voidly_api}
+#   ${hydra_version}         (npm semver range, e.g. "^1.0.0")
+
+package_update: true
+package_upgrade: true
+packages:
+  - curl
+  - ca-certificates
+
+users:
+  - name: voidly-hydra
+    shell: /bin/bash
+    home: /opt/voidly-hydra
+    system: true
+    # NB: intentionally NOT granted sudo. The hardened systemd unit below
+    # is the only thing that runs code as this user, and it needs no
+    # privileges beyond the ReadWritePaths whitelist.
+
+write_files:
+  - path: /etc/systemd/system/voidly-hydra.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Voidly Pay Hydra provider
+      Documentation=https://voidly.ai/voidly-pay-hydra.md
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      User=voidly-hydra
+      Group=voidly-hydra
+      WorkingDirectory=/opt/voidly-hydra
+      Environment=HYDRA_HOME=/opt/voidly-hydra
+      Environment=VOIDLY_API=${voidly_api}
+      # Pin the npm version via Terraform variable so an upstream
+      # breaking release doesn't propagate fleet-wide on the next
+      # Restart=always tick.
+      ExecStartPre=/bin/sh -c 'npx --yes @voidly/pay-hydra@${hydra_version} init --capability=${hydra_capability} --price=${hydra_price_credits} --sla-hours=${hydra_sla_hours}'
+      ExecStart=/usr/bin/npx --yes @voidly/pay-hydra@${hydra_version} run --port=8420
+      Restart=always
+      RestartSec=10
+      StandardOutput=journal
+      StandardError=journal
+
+      ProtectSystem=strict
+      ReadWritePaths=/opt/voidly-hydra
+      ProtectHome=true
+      NoNewPrivileges=true
+      PrivateTmp=true
+      ProtectKernelTunables=true
+      ProtectControlGroups=true
+      ProtectKernelModules=true
+      ProtectKernelLogs=true
+      RestrictSUIDSGID=true
+      RestrictRealtime=true
+      LockPersonality=true
+      MemoryDenyWriteExecute=true
+      SystemCallArchitectures=native
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /opt/voidly-hydra/boot-check.sh
+    mode: "0755"
+    owner: root:root
+    content: |
+      #!/bin/sh
+      # Boot health check. Runs after systemctl enables the service.
+      # Polls :8420/healthz for up to 5 minutes; writes a sentinel file
+      # so `terraform apply` completers can verify the node is live via
+      #   ssh <ip> 'test -f /opt/voidly-hydra/.boot-ok && echo ready'
+      set -eu
+      deadline=$(( $(date +%s) + 300 ))
+      while [ "$(date +%s)" -lt "$deadline" ]; do
+        if curl -fsS --max-time 3 http://127.0.0.1:8420/healthz >/dev/null 2>&1; then
+          touch /opt/voidly-hydra/.boot-ok
+          echo "[boot-check] healthz OK" | systemd-cat -t voidly-hydra-boot-check
+          exit 0
+        fi
+        sleep 5
+      done
+      echo "[boot-check] FAILED after 5 min — journalctl -u voidly-hydra for details" | systemd-cat -t voidly-hydra-boot-check -p err
+      exit 1
+
+runcmd:
+  # Install Node 20 via NodeSource's Debian apt repo.
+  # (For RHEL-family forks, replace this block with the rpm.nodesource.com setup.)
+  - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  - apt-get install -y nodejs
+  - mkdir -p /opt/voidly-hydra
+  - chown -R voidly-hydra:voidly-hydra /opt/voidly-hydra
+  - chmod 700 /opt/voidly-hydra
+  - systemctl daemon-reload
+  - systemctl enable --now voidly-hydra
+  # Non-blocking — runs in the background so cloud-init finishes quickly
+  # but the operator can still check /opt/voidly-hydra/.boot-ok later.
+  - nohup /opt/voidly-hydra/boot-check.sh >/dev/null 2>&1 &

@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "voidly-pay-hydra.fullname" . }}-test-healthz
+  labels:
+    {{- include "voidly-pay-hydra.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  containers:
+    - name: curl
+      image: curlimages/curl:8.9.1
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 65532
+        capabilities:
+          drop: [ALL]
+        seccompProfile:
+          type: RuntimeDefault
+      command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Polling /healthz for up to 180s..."
+          for i in $(seq 1 36); do
+            if curl -fsS --max-time 3 "http://{{ include "voidly-pay-hydra.fullname" . }}:{{ .Values.service.port }}/healthz" >/dev/null; then
+              echo "healthz OK"
+              curl -s "http://{{ include "voidly-pay-hydra.fullname" . }}:{{ .Values.service.port }}/.well-known/agent-card.json" | head -c 400
+              echo ""
+              exit 0
+            fi
+            echo "attempt $i: not ready yet, sleeping 5s..."
+            sleep 5
+          done
+          echo "healthz never returned 200 — install is broken"
+          exit 1
