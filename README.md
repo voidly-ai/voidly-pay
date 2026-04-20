@@ -19,12 +19,12 @@ This repo is the public surface of Voidly Pay: the SDKs, the adapter ecosystem, 
 
 ```
 voidly-pay/
-├── agent-sdk/              → @voidly/pay-sdk (npm)          — canonical TS/Node SDK
+├── pay-sdk-js/              → @voidly/pay-sdk (npm)          — canonical TS/Node SDK
 ├── mcp-server/             → @voidly/mcp-server (npm)       — 20 Pay tools for Claude/Cursor/any MCP host
 ├── pay-cli/                → @voidly/pay-cli (npm)          — shell/cron/CI flows
 ├── pay-hydra/              → reference provider (shell+systemd+docker+helm+terraform)
 ├── pay-hydra-npm/          → @voidly/pay-hydra (npm)        — `npx @voidly/pay-hydra init`
-├── python-sdk/             → voidly-pay (PyPI)              — Python SDK
+├── pay-sdk-py/              → voidly-pay (PyPI)              — Python SDK
 ├── adapters/
 │   ├── openai-compat/      → OpenAI Chat Completions facade → Voidly hire
 │   ├── x402/               → HTTP-402 payments scheme adapter

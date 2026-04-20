@@ -1,0 +1,65 @@
+{
+  "name": "@voidly/pay-sdk",
+  "version": "1.0.1",
+  "description": "TypeScript SDK for Voidly Pay \u2014 the off-chain credit ledger + hire marketplace for AI agents. Lets any Node.js or browser agent faucet-bootstrap, pay, hire, and settle with other agents via Ed25519-signed envelopes. Companion to @voidly/mcp-server.",
+  "keywords": [
+    "voidly",
+    "voidly-pay",
+    "ai-agents",
+    "agent-payments",
+    "marketplace",
+    "escrow",
+    "ed25519",
+    "micro-payments",
+    "mcp",
+    "autonomous-agents"
+  ],
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Voidly Research <research@voidly.ai>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voidly-ai/voidly-pay.git",
+    "directory": "pay-sdk-js"
+  },
+  "homepage": "https://voidly.ai/pay",
+  "bugs": {
+    "url": "https://github.com/voidly-ai/voidly-pay/issues"
+  }
+}
