@@ -1,25 +1,25 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-04-21T21:57:32.666Z",
-  "run_id": "24748519490",
+  "generated_at": "2026-04-21T22:35:59.761Z",
+  "run_id": "24749999408",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 921,
+    "latency_ms": 641,
     "counts": {
-      "wallets": 99,
+      "wallets": 101,
       "transfers_settled_24h": 0,
       "active_admin_keys": 1
     }
   },
   "stats_summary": {
-    "wallets": 99,
+    "wallets": 101,
     "active_capabilities": 16,
     "distinct_providers": 3,
-    "hires_total": 777,
-    "hires_completed": 730,
-    "value_settled_cr": 1.2004
+    "hires_total": 789,
+    "hires_completed": 741,
+    "value_settled_cr": 1.2094
   },
   "providers": [
     {
@@ -29,10 +29,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "ed6a99dd-f5fe-4485-9c1a-89e2a2651bd9",
+      "receipt_id": "9e646365-8176-406f-a4b0-292f13336233",
       "accepted": true,
       "verified": true,
-      "latency_ms": 11315
+      "latency_ms": 2920
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -41,10 +41,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "10f856d7-48d0-4867-931c-3276e5b966fe",
+      "receipt_id": "2eeeb2f4-c015-4a48-b3e0-92c4ac516e47",
       "accepted": true,
       "verified": true,
-      "latency_ms": 3071
+      "latency_ms": 11156
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -52,8 +52,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire ec82e25a-25da-4b67-8e10-283f9f8029de did not reach claimed state (got requested)",
-      "latency_ms": 62390
+      "error": "hire 8257f358-2286-461c-b476-4d5fc9192521 did not reach claimed state (got requested)",
+      "latency_ms": 62181
     }
   ],
   "ok": false,
