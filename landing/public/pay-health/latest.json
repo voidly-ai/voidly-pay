@@ -1,25 +1,25 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-04-21T10:19:49.251Z",
-  "run_id": "24717064115",
+  "generated_at": "2026-04-21T11:36:07.985Z",
+  "run_id": "24720180825",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 657,
+    "latency_ms": 850,
     "counts": {
-      "wallets": 83,
+      "wallets": 85,
       "transfers_settled_24h": 0,
       "active_admin_keys": 1
     }
   },
   "stats_summary": {
-    "wallets": 83,
+    "wallets": 85,
     "active_capabilities": 16,
     "distinct_providers": 3,
-    "hires_total": 606,
-    "hires_completed": 569,
-    "value_settled_cr": 1.0696
+    "hires_total": 625,
+    "hires_completed": 587,
+    "value_settled_cr": 1.0842
   },
   "providers": [
     {
@@ -29,10 +29,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "96860d7e-d670-47fa-af12-d684ba3fa95d",
+      "receipt_id": "557b2d72-bf17-4218-b38e-e23e7f7788a8",
       "accepted": true,
       "verified": true,
-      "latency_ms": 2915
+      "latency_ms": 3591
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -41,10 +41,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "368195db-f97b-4cf1-a51d-61cda4b65e9b",
+      "receipt_id": "da7435a8-916c-4f77-8184-4656776341fc",
       "accepted": true,
       "verified": true,
-      "latency_ms": 6967
+      "latency_ms": 11850
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -52,8 +52,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire d7b9d442-dd06-4788-a303-47c24c72d608 did not reach claimed state (got requested)",
-      "latency_ms": 61763
+      "error": "hire bbfffdbf-9e91-42d4-aac3-745e36700a89 did not reach claimed state (got requested)",
+      "latency_ms": 61064
     }
   ],
   "ok": false,
