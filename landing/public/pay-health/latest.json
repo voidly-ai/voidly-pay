@@ -1,25 +1,25 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-04-20T23:57:04.088Z",
-  "run_id": "24696559207",
+  "generated_at": "2026-04-21T02:08:16.658Z",
+  "run_id": "24700332823",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 944,
+    "latency_ms": 394,
     "counts": {
-      "wallets": 73,
-      "transfers_settled_24h": 1,
+      "wallets": 75,
+      "transfers_settled_24h": 0,
       "active_admin_keys": 1
     }
   },
   "stats_summary": {
-    "wallets": 73,
+    "wallets": 75,
     "active_capabilities": 16,
     "distinct_providers": 3,
-    "hires_total": 465,
-    "hires_completed": 433,
-    "value_settled_cr": 0.9598
+    "hires_total": 495,
+    "hires_completed": 462,
+    "value_settled_cr": 0.9832
   },
   "providers": [
     {
@@ -29,10 +29,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "df03a6ac-fbb4-4dbe-8fda-a10aa9277759",
+      "receipt_id": "ff1b476c-f2f0-4db1-9d78-219d91b152b6",
       "accepted": true,
       "verified": true,
-      "latency_ms": 13695
+      "latency_ms": 11871
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -41,10 +41,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "d872b268-e561-4f64-860d-4dc9f762d9c4",
+      "receipt_id": "2475d88a-373b-4cff-977c-ef2bc1c201cb",
       "accepted": true,
       "verified": true,
-      "latency_ms": 5031
+      "latency_ms": 11934
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -52,8 +52,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire b7866570-311b-4f63-86c1-59aec1b7a8bc did not reach claimed state (got requested)",
-      "latency_ms": 62013
+      "error": "hire 0d6e2a9e-054b-4a25-821f-38806f76b050 did not reach claimed state (got requested)",
+      "latency_ms": 61099
     }
   ],
   "ok": false,
