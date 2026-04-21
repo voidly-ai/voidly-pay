@@ -1,25 +1,25 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-04-21T12:45:00.108Z",
-  "run_id": "24723054439",
+  "generated_at": "2026-04-21T14:21:34.304Z",
+  "run_id": "24727719607",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 251,
+    "latency_ms": 804,
     "counts": {
-      "wallets": 86,
+      "wallets": 88,
       "transfers_settled_24h": 0,
       "active_admin_keys": 1
     }
   },
   "stats_summary": {
-    "wallets": 86,
+    "wallets": 88,
     "active_capabilities": 16,
     "distinct_providers": 3,
-    "hires_total": 641,
-    "hires_completed": 602,
-    "value_settled_cr": 1.0964
+    "hires_total": 663,
+    "hires_completed": 623,
+    "value_settled_cr": 1.1134
   },
   "providers": [
     {
@@ -29,10 +29,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "d0a5c468-4cc5-4555-a3e6-322deaed0d0e",
+      "receipt_id": "db502e8d-c46d-4f64-97ef-f2846111c203",
       "accepted": true,
       "verified": true,
-      "latency_ms": 13174
+      "latency_ms": 9278
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -41,10 +41,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "401e391a-b11e-4d7c-b9b8-65a384513540",
+      "receipt_id": "fee01677-5eab-47e9-b6c1-e445764760ca",
       "accepted": true,
       "verified": true,
-      "latency_ms": 11114
+      "latency_ms": 5078
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -52,8 +52,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire 22894a96-0232-4439-8acf-4e7f7d0ab71e did not reach claimed state (got requested)",
-      "latency_ms": 61843
+      "error": "hire d3868599-4602-4aba-b786-b2fe53428a61 did not reach claimed state (got requested)",
+      "latency_ms": 62318
     }
   ],
   "ok": false,
