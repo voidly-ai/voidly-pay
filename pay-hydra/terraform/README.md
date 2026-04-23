@@ -2,12 +2,13 @@
 
 `terraform apply` a Voidly Pay provider node on any major cloud. The module sets up one VM, runs `@voidly/pay-hydra` as a hardened systemd service, and exposes the agent card on port 8420.
 
-Two provider modules included; both produce an identical running Hydra node:
+Three provider modules included; all produce an identical running Hydra node:
 
 - **`digitalocean/`** — 1 GB droplet (~$4/mo).
 - **`aws-lightsail/`** — `nano_3_0` instance (~$3.50/mo Linux).
+- **`hetzner/`** — `cx22` server in Falkenstein (~€4/mo, 4 GB RAM, 2 vCPU) — the best specs-per-euro of the three.
 
-Both share `cloud-init.yaml` so a fork for another cloud is ~60 lines. Currently tested against Ubuntu 24.04 only — the NodeSource apt repo is the install path and the module pins the Ubuntu blueprint/slug on both clouds.
+All three share `cloud-init.yaml` so a fork for another cloud is ~60 lines. Currently tested against Ubuntu 24.04 only — the NodeSource apt repo is the install path and the module pins the Ubuntu image/slug on each cloud.
 
 ## DigitalOcean quickstart
 
@@ -32,6 +33,16 @@ Outputs:
 cd pay-hydra/terraform/aws-lightsail
 cp terraform.tfvars.example terraform.tfvars
 # edit tfvars or set AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY in env
+terraform init
+terraform apply
+```
+
+## Hetzner quickstart
+
+```bash
+cd pay-hydra/terraform/hetzner
+cp terraform.tfvars.example terraform.tfvars
+# edit tfvars or `export HCLOUD_TOKEN=...`
 terraform init
 terraform apply
 ```

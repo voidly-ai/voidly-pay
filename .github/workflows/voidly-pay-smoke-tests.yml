@@ -161,6 +161,10 @@ jobs:
             package_dir: adapters/llamaindex
             module: voidly_pay_llamaindex
             factory: voidly_pay_tools
+          - adapter: haystack
+            package_dir: adapters/haystack
+            module: voidly_pay_haystack
+            factory: voidly_pay_tools
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -293,6 +297,7 @@ jobs:
         module:
           - pay-hydra/terraform/digitalocean
           - pay-hydra/terraform/aws-lightsail
+          - pay-hydra/terraform/hetzner
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3

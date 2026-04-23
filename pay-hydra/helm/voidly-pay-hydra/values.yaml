@@ -110,3 +110,12 @@ tolerations: []
 # When replicaCount > 1, a soft podAntiAffinity spreads replicas across
 # nodes. Override `affinity` to tighten or loosen.
 affinity: {}
+
+# Only rendered when replicaCount > 1. Leave enabled unless your cluster
+# has a global PDB policy you don't want to duplicate. Set one of
+# min/max — not both.
+podDisruptionBudget:
+  enabled: true
+  # minAvailable: 2
+  # maxUnavailable: 1
+  # (default when neither is set: minAvailable = replicaCount - 1)

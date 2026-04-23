@@ -315,13 +315,25 @@ function help() {
   console.log('Docs: https://voidly.ai/voidly-pay-hydra.md')
 }
 
+/**
+ * `bootstrap` — init-if-needed then run. Convenience command so container
+ * entrypoints (Dockerfile, docker-compose, Helm) can call one thing
+ * instead of a shell that chains `init && run`. Useful for distroless
+ * images that have no shell.
+ */
+async function cmdBootstrap() {
+  await cmdInit()
+  await cmdRun()
+}
+
 ;(async () => {
   switch (cmd) {
-    case 'init':    return cmdInit()
-    case 'run':     return cmdRun()
-    case 'status':  return cmdStatus()
-    case 'publish': return cmdPublish()
-    case 'delist':  return cmdDelist()
+    case 'init':      return cmdInit()
+    case 'run':       return cmdRun()
+    case 'bootstrap': return cmdBootstrap()
+    case 'status':    return cmdStatus()
+    case 'publish':   return cmdPublish()
+    case 'delist':    return cmdDelist()
     case '-h': case '--help': case 'help': default: help()
   }
 })().catch(e => { console.error(e); process.exit(1) })

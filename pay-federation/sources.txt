@@ -3,25 +3,56 @@
 # One URL per line. Each URL MUST serve:
 #   - A valid Google A2A v0.3.0 Agent Card (JSON), OR
 #   - A valid .well-known/agent-card.json, OR
-#   - A Voidly Pay manifest (/v1/pay/manifest.json)
+#   - A Voidly Pay manifest (/v1/pay/manifest.json), OR
+#   - An agent fleet listing (with `agents[]` or `services[]` array)
 #
-# The crawler fetches each URL daily, validates the response, and records
-# the peer in pay-federation/peers.json. Adding a line is enough — no
-# credentials, no admin action, no coordination with upstream needed.
+# The crawler at .github/workflows/voidly-pay-federation-crawl.yml
+# fetches each URL daily at 06:37 UTC, validates the JSON against the
+# schemas above, and commits the normalized result to peers.json.
 #
-# To opt OUT: remove your URL and its next-day snapshot will drop you
-# automatically.
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                      HOW TO JOIN                               ║
+# ╠════════════════════════════════════════════════════════════════╣
+# ║  1. Publish an agent card at a stable, world-readable URL.     ║
+# ║  2. Open a PR against this file adding your URL on a new line  ║
+# ║     under the "External peers" section below.                  ║
+# ║  3. Wait for the next daily crawl.                             ║
+# ║                                                                ║
+# ║  Your URL is the only thing we need. No credentials. No forms. ║
+# ║  We never push anything to you — federation is pull-only.      ║
+# ║                                                                ║
+# ║  To leave: PR that removes the line. Entry drops next day.     ║
+# ╚════════════════════════════════════════════════════════════════╝
 #
-# To opt IN: publish an agent card at your URL, open a PR appending
-# the URL here, and wait for the next cron run.
+# Validation rules the crawler applies:
+#   - URL MUST return HTTP 200 within 15s to a GET request with UA
+#     "voidly-pay-federation-crawler/1.0 (+https://voidly.ai/pay/federation)".
+#   - Response body MUST parse as JSON.
+#   - Body MUST fit one of the four schemas above. Otherwise: classified
+#     as "unrecognized_schema" and recorded with ok=false. Still shown,
+#     but won't render green.
 #
 # Lines starting with '#' are comments and ignored.
 
-# ── Voidly's own ─────────────────────────────────────────────────────────
+# ── Voidly's own identities ──────────────────────────────────────────────
 https://voidly.ai/.well-known/agent-card.json
 https://api.voidly.ai/.well-known/agent-card.json
 https://api.voidly.ai/v1/pay/manifest.json
 
-# ── Known public / reference agent cards ────────────────────────────────
-# (add entries here via PR — each URL must return a valid, publicly
-# fetchable agent card that its operator has explicitly published.)
+# ── External peers ──────────────────────────────────────────────────────
+# Add your URL below on its own line. One PR per line keeps history
+# readable; batched PRs also fine if the sources genuinely belong
+# together (e.g. multiple agent cards under one organization).
+#
+# Example:
+#   https://your-domain.example.com/.well-known/agent-card.json
+#
+# Guidelines:
+#   - Must be over HTTPS.
+#   - Must be world-readable (no auth, no IP allowlist).
+#   - Should be stable — you're committing to serve this URL for as
+#     long as you want to be in the index. Moving it is a PR.
+#
+# Pay-adjacent registries (pull-mode only — we never post):
+#   - A2A registry proposals: not yet a standardized endpoint
+#   - MCP registry: https://mcp.so (separate model, not federated here)

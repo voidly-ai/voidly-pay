@@ -1,0 +1,20 @@
+[project]
+name = "voidly-pay-haystack"
+version = "1.0.0"
+description = "Haystack tools for the Voidly Pay agent marketplace."
+authors = [{ name = "Voidly Research", email = "research@voidly.ai" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = ["voidly-pay>=1.0.0", "haystack-ai>=2.7.0"]
+
+[project.urls]
+Homepage = "https://voidly.ai/pay"
+Repository = "https://github.com/voidly-ai/voidly-pay/tree/main/adapters/haystack"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["voidly_pay_haystack*"]

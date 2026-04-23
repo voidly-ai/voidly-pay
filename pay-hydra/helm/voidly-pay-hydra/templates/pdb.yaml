@@ -1,0 +1,31 @@
+{{/*
+PodDisruptionBudget — only rendered when replicaCount > 1. A 1-replica
+StatefulSet doesn't benefit from a PDB (can't evict the only replica
+without downtime regardless), and some clusters reject PDBs with
+minAvailable equal to replicaCount.
+
+Default:
+  minAvailable = replicaCount - 1 (tolerate one voluntary disruption)
+
+Override via `podDisruptionBudget.minAvailable` or
+`podDisruptionBudget.maxUnavailable`.
+*/}}
+{{- if and (gt (int .Values.replicaCount) 1) (.Values.podDisruptionBudget | default dict | dig "enabled" true) }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "voidly-pay-hydra.fullname" . }}
+  labels:
+    {{- include "voidly-pay-hydra.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "voidly-pay-hydra.selectorLabels" . | nindent 6 }}
+  {{- if .Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable }}
+  {{- else if .Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  {{- else }}
+  minAvailable: {{ sub (int .Values.replicaCount) 1 }}
+  {{- end }}
+{{- end }}

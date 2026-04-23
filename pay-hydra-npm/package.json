@@ -1,7 +1,7 @@
 {
   "name": "@voidly/pay-hydra",
-  "version": "1.0.1",
-  "description": "Voidly Pay Hydra — one-command bootstrap of a self-hosted provider on the agent payment marketplace. Generates DID, funds via faucet, publishes a capability, joins the federation index.",
+  "version": "1.0.2",
+  "description": "Voidly Pay Hydra \u2014 one-command bootstrap of a self-hosted provider on the agent payment marketplace. Generates DID, funds via faucet, publishes a capability, joins the federation index.",
   "keywords": [
     "voidly",
     "voidly-pay",

@@ -1,0 +1,30 @@
+# Rename to terraform.tfvars before `terraform apply`.
+#
+# Credentials — prefer env:
+#   export HCLOUD_TOKEN="..."
+# Or paste into hcloud_token below.
+
+# hcloud_token = "..."
+
+# Optional overrides
+# location          = "fsn1"           # one of nbg1 fsn1 hel1 ash hil sin
+# server_type       = "cx22"           # ~€4/mo, 4GB RAM, 2 shared vCPU
+# image             = "ubuntu-24.04"   # only ubuntu-24.04 is tested today
+# hydra_capability  = "hash.sha256"
+# hydra_price_credits = 0.0005
+# hydra_sla_hours   = 1
+# hydra_version     = "^1.0.0"
+
+# Strongly recommended — upload an SSH key to the Hetzner project first
+# (Project → Security → SSH keys) and reference by name here. Without
+# this you cannot recover /opt/voidly-hydra/keys/active.json if the
+# server ever misbehaves.
+# ssh_key_names     = ["my-laptop"]
+
+# Scope SSH to your own IP. Leave empty (default) to close :22 entirely.
+# operator_ip_cidrs = ["1.2.3.4/32"]
+
+# OPTIONAL — back up the DID key to a local file after first boot.
+# Requires ssh_key_names + operator_ip_cidrs + ssh_private_key_path.
+# key_backup_path      = "~/hydra-keys/hetzner-active.json"
+# ssh_private_key_path = "~/.ssh/id_ed25519"
