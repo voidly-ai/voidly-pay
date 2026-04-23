@@ -1,0 +1,85 @@
+name: Bug report
+description: Something isn't working as documented
+title: "[bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. The more of the below you fill in, the faster we can fix it.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which surface?
+      description: Where did you hit the bug?
+      options:
+        - "@voidly/pay-sdk (npm)"
+        - voidly-pay (PyPI)
+        - "@voidly/pay-cli (npm)"
+        - "@voidly/pay-hydra (npm)"
+        - "@voidly/mcp-server (npm)"
+        - Hydra reference impl (Dockerfile / Helm / Terraform / systemd)
+        - An adapter (langchain, crewai, autogen, llamaindex, vercel-ai, openai-compat, x402, a2a)
+        - A JSON feed (pay-health, pay-federation, pay-reach)
+        - A workflow
+        - Docs
+        - Other — describe below
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Plain prose. What did you try, what did you see?
+      placeholder: I ran `npx @voidly/pay-hydra init` and...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: What was the docs/SDK/CLI supposed to do here?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. clone the repo
+        2. ...
+        3. observe ...
+      render: markdown
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / errors
+      description: Paste any stack traces, HTTP errors, or console output. Redact any DIDs or keys you don't want public.
+      render: shell
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version (if applicable)
+      placeholder: "@voidly/pay-sdk@1.0.1"
+
+  - type: input
+    id: os
+    attributes:
+      label: OS + runtime
+      placeholder: "macOS 15, Node 20.12"
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I've searched existing issues.
+          required: true
+        - label: This isn't a security issue (those go to research@voidly.ai per SECURITY.md).
+          required: true

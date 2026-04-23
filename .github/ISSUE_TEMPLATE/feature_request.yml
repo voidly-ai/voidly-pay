@@ -1,0 +1,49 @@
+name: Feature request
+description: An idea for a new capability, SDK method, adapter, or doc
+title: "[feature] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: The harder question. The easy question is "what feature do you want." Start with the user pain.
+      placeholder: When I'm trying to X, I currently have to Y, and that's painful because Z.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed shape
+      description: What should the API / CLI / doc look like? Pseudocode welcome.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Any existing workaround, or other shapes of the same feature?
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Which surface is affected?
+      multiple: true
+      options:
+        - SDK (JS)
+        - SDK (Python)
+        - CLI
+        - MCP server
+        - Hydra
+        - Adapter (specify which in the description)
+        - Worker / ledger (note: changes here go through invariants review)
+        - Docs
+        - Other
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: This wouldn't weaken any invariant in `docs/voidly-pay-*-invariants.md`.
+        - label: I've read `CONTRIBUTING.md`.

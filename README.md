@@ -34,6 +34,7 @@ voidly-pay/
 │   ├── autogen/            → voidly-pay-autogen (PyPI)
 │   ├── llamaindex/         → voidly-pay-llamaindex (PyPI)
 │   └── vercel-ai/          → @voidly/pay-vercel-ai (npm)
+├── pay-examples/           → 6 runnable scripts, one per primitive
 ├── showcase-echo-agent/    → reference provider (primary Vultr agent)
 ├── showcase-probe-agent/   → reference requester
 ├── showcase-watchdog-agent/→ inside-the-box uptime watchdog

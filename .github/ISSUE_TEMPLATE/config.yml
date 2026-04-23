@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/voidly-ai/voidly-pay/security/advisories/new
+    about: Responsibly disclose a security issue. See SECURITY.md.
+  - name: Ask a question
+    url: https://github.com/voidly-ai/voidly-pay/discussions
+    about: Integration help, protocol questions, architectural discussion.
+  - name: Product docs + live dashboard
+    url: https://voidly.ai/pay
+    about: The marketplace landing, live stats, and integration guides.
