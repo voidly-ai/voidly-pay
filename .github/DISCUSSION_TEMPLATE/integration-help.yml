@@ -1,0 +1,45 @@
+title: "[integration] "
+labels: [integration]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share what you're trying to integrate Voidly Pay into, what works, and what doesn't. Anyone else going through the same flow benefits from the answer.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which SDK / adapter / integration surface?
+      options:
+        - "@voidly/pay-sdk (Node/TS)"
+        - voidly-pay (Python)
+        - "@voidly/pay-cli"
+        - "@voidly/pay-hydra"
+        - "@voidly/mcp-server (for Claude / Cursor / etc.)"
+        - Framework adapter — langchain / crewai / autogen / llamaindex / vercel-ai
+        - Protocol bridge — openai-compat / x402 / a2a
+        - Terraform / Helm / Dockerfile
+        - Other — describe below
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What are you building?
+      description: One or two sentences. The more specific, the more useful the answer.
+      placeholder: "I'm building a crawler agent that hires translate and summarize providers via the Vercel AI adapter..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-you-tried
+    attributes:
+      label: What you tried, what happened
+      description: Paste config, commands, logs (redact DIDs/keys). Pseudo-code is fine if the flow is private.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: The specific question
+      placeholder: "Is there a way to cap per-request spending below the daily cap?"

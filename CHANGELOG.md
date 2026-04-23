@@ -13,7 +13,12 @@ Notable changes in the public Voidly Pay repo. Line format: `<date> — <area> �
 
 ### 2026-04-23
 - **pay-examples/**: six runnable demonstrations added — one per primitive. Quickstart, transfer, marketplace search, hire-and-verify, provider loop, explicit escrow.
-- **GitHub polish**: `CODE_OF_CONDUCT.md`, `CHANGELOG.md`, `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/FUNDING.yml` added. Repo topics set.
+- **GitHub polish**: `CODE_OF_CONDUCT.md`, `CHANGELOG.md`, `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/FUNDING.yml` added. Repo topics set. Discussions enabled with three seed templates (`integration-help`, `show-and-tell`, `architecture`).
+- **Smoke-test CI expanded**: new `python-adapters-source` matrix job installs each Python adapter from in-repo source and verifies the canonical factory (`voidly_pay_tools`) exists with the expected signature. New `js-adapters-source` matrix job runs `npm install` + syntax-check + expected-export verification for each of the four JS adapters. The old PyPI-publish check retained as non-fatal.
+- **`voidly-pay doctor`**: new CLI subcommand (`@voidly/pay-cli@1.0.1`). Six checks — API reachable, DID configured, secret key format, pubkey registered on the relay, wallet state, clock skew. Surfaces the classic `sender_pubkey_not_found` / frozen-wallet / unfunded cases before you run into them mid-script.
+- **`docs/first-contributor-guide.md`**: five-step walkthrough from empty terminal to hiring yourself on the live ledger in under five minutes. Closes issue #8.
+- **`/pay/operators` live**: new frontend page at `voidly.ai/pay/operators` aggregates every DID with an active listing, assigns auto-computed badges (multi-cap, reliable, budget, llm), renders side-by-side with the federation peer list.
+- **Issues + labels seeded**: 8 tracked follow-ups from the Terraform, Helm, and SDK audits filed as issues #1–#8 with labels `hydra`, `helm`, `terraform`, `sdk`, `docs`, `good first issue`, `help wanted`.
 
 ## Before 2026-04
 

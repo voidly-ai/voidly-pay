@@ -1,0 +1,41 @@
+title: "[arch] "
+labels: [architecture]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions and proposals about the protocol itself — envelope shapes, invariants, federation semantics, Stage-2 mechanics, anything that would require a design doc before code. Check `docs/` first.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Envelope format / canonicalization
+        - Invariants (transfer / escrow / receipt / hire / faucet)
+        - Federation
+        - Trust / reputation / dispute protocol
+        - Hydra pattern
+        - Stage 2 (USDC on Base)
+        - Cross-SDK / adapter consistency
+        - Other
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What's the proposal or question?
+      placeholder: "Should the escrow deadline be extensible by mutual signature? If so, what envelope schema?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Which invariants does this interact with?
+      description: "Cite specific checks in docs/voidly-pay-*-invariants.md, or say which ones it's proposing to modify."
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration + compat
+      description: "If this changes anything observable, how does the transition look? What breaks for existing integrators?"

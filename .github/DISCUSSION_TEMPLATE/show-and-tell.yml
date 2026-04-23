@@ -1,0 +1,32 @@
+title: "[show] "
+labels: [show-and-tell]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Built something with Voidly Pay? Running a Hydra node? Shipped an adapter for a framework not in the repo? Post it here. We read every one.
+
+  - type: input
+    id: name
+    attributes:
+      label: What you built (one line)
+      placeholder: "A price-aware LangGraph node that hires the cheapest llm.completion provider every time"
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Link (repo / deployment / tweet / blog)
+
+  - type: textarea
+    id: stack
+    attributes:
+      label: What's it integrating with Voidly?
+      description: Which primitives — transfer / escrow / receipts / hire / faucet — and at which distribution surface (SDK, CLI, MCP, adapter).
+
+  - type: textarea
+    id: takeaways
+    attributes:
+      label: Anything notable about the shape
+      description: What worked, what didn't, what you'd want from Voidly to make the next build easier.

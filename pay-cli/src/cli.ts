@@ -10,6 +10,7 @@
  *   voidly-pay hire <id> --input '<j>' Hire a provider + auto-accept
  *   voidly-pay balance [did]           Read a wallet
  *   voidly-pay trust [did]             Read provider/requester stats
+ *   voidly-pay doctor                  Diagnose common install issues
  *
  * Config: ~/.voidly-pay/config.json OR env (VOIDLY_AGENT_DID + VOIDLY_AGENT_SECRET)
  */
@@ -234,6 +235,132 @@ async function cmdBalance(args: string[]): Promise<void> {
   }
 }
 
+/**
+ * `voidly-pay doctor` — diagnose the common things a new install can get wrong.
+ *
+ * Runs a sequence of checks and prints a compact status line per check.
+ * Exits 0 when everything green, 1 when any check is red.
+ */
+async function cmdDoctor(_args: string[]): Promise<void> {
+  const checks: Array<{ name: string; pass: boolean | null; detail: string }> = []
+
+  const record = (name: string, pass: boolean | null, detail: string) => {
+    checks.push({ name, pass, detail })
+  }
+
+  // 1. Can we reach the API?
+  try {
+    const r = await fetch('https://api.voidly.ai/v1/pay/health', { signal: AbortSignal.timeout(5000) })
+    const h = await r.json().catch(() => ({} as { system_frozen?: boolean; counts?: { wallets?: number } }))
+    if (r.status !== 200) {
+      record('API reachable', false, `HTTP ${r.status}`)
+    } else if (h.system_frozen) {
+      record('API reachable', false, 'system frozen — transfers paused')
+    } else {
+      record('API reachable', true, `healthy, ${h.counts?.wallets ?? '?'} wallets on ledger`)
+    }
+  } catch (e: unknown) {
+    record('API reachable', false, `network error: ${(e as Error)?.message ?? e}`)
+  }
+
+  // 2. Config file / env present?
+  const cfg = loadConfig()
+  if (!cfg) {
+    record('DID configured', false, `no ${CONFIG_PATH}, no env vars — run 'voidly-pay init'`)
+  } else {
+    const source = process.env.VOIDLY_AGENT_DID ? 'env' : 'config file'
+    record('DID configured', true, `${cfg.did.slice(0, 40)}… (from ${source})`)
+  }
+
+  // 3. Secret key format — quick sanity check.
+  if (cfg) {
+    const secretOk = typeof cfg.secretKeyBase64 === 'string' && cfg.secretKeyBase64.length >= 80
+    record('Secret key format', secretOk, secretOk ? `base64 length ${cfg.secretKeyBase64.length}` : 'missing or too short')
+  }
+
+  // 4. Relay register state (does the worker know this pubkey?)
+  if (cfg) {
+    try {
+      const r = await fetch(`https://api.voidly.ai/v1/agent/identity/${encodeURIComponent(cfg.did)}`, { signal: AbortSignal.timeout(5000) })
+      if (r.status === 200) {
+        record('Pubkey registered', true, 'relay knows this DID')
+      } else if (r.status === 404) {
+        record('Pubkey registered', false, "relay does not know this DID — pay writes will return 'sender_pubkey_not_found'. Re-run 'voidly-pay init' or POST /v1/agent/register.")
+      } else {
+        record('Pubkey registered', null, `unexpected HTTP ${r.status}`)
+      }
+    } catch (e: unknown) {
+      record('Pubkey registered', null, `check failed: ${(e as Error)?.message ?? e}`)
+    }
+  }
+
+  // 5. Wallet + balance
+  if (cfg) {
+    try {
+      const r = await fetch(`https://api.voidly.ai/v1/pay/wallet/${encodeURIComponent(cfg.did)}`, { signal: AbortSignal.timeout(5000) })
+      if (r.status === 200) {
+        const w = await r.json() as { wallet?: { balance_micro?: number; frozen?: boolean }; balance_micro?: number; frozen?: boolean }
+        const balance = w.wallet?.balance_micro ?? w.balance_micro ?? 0
+        const frozen = w.wallet?.frozen ?? w.frozen ?? false
+        if (frozen) {
+          record('Wallet state', false, 'WALLET FROZEN — admin action required')
+        } else if (balance === 0) {
+          record('Wallet state', false, "balance 0 cr — run 'voidly-pay faucet' to claim starter credits")
+        } else {
+          record('Wallet state', true, `${fmtCr(balance)}`)
+        }
+      } else if (r.status === 404) {
+        record('Wallet state', false, "no wallet yet — run 'voidly-pay faucet' to create + fund it")
+      } else {
+        record('Wallet state', null, `unexpected HTTP ${r.status}`)
+      }
+    } catch (e: unknown) {
+      record('Wallet state', null, `check failed: ${(e as Error)?.message ?? e}`)
+    }
+  }
+
+  // 6. Clock sync — envelopes are rejected if the client clock skews past the window.
+  try {
+    const t0 = Date.now()
+    const r = await fetch('https://api.voidly.ai/v1/pay/health', { signal: AbortSignal.timeout(5000) })
+    const serverDate = r.headers.get('date')
+    if (serverDate) {
+      const skewMs = Math.abs(Date.parse(serverDate) - t0)
+      if (skewMs < 60_000) {
+        record('Clock skew', true, `${Math.round(skewMs)}ms vs api.voidly.ai`)
+      } else if (skewMs < 600_000) {
+        record('Clock skew', null, `${Math.round(skewMs / 1000)}s — close to the 60-minute envelope window, consider sync`)
+      } else {
+        record('Clock skew', false, `${Math.round(skewMs / 1000)}s off — envelopes will be rejected. Sync your system clock.`)
+      }
+    } else {
+      record('Clock skew', null, 'server did not return a Date header')
+    }
+  } catch (e: unknown) {
+    record('Clock skew', null, `check failed: ${(e as Error)?.message ?? e}`)
+  }
+
+  // Render
+  console.log('')
+  console.log('voidly-pay doctor')
+  console.log('─'.repeat(60))
+  let failed = 0
+  for (const c of checks) {
+    const icon = c.pass === true ? '✓' : c.pass === false ? '✗' : '·'
+    const color = c.pass === true ? '\x1b[32m' : c.pass === false ? '\x1b[31m' : '\x1b[33m'
+    console.log(`${color}${icon}\x1b[0m ${c.name.padEnd(22)} ${c.detail}`)
+    if (c.pass === false) failed++
+  }
+  console.log('─'.repeat(60))
+  if (failed === 0) {
+    console.log('\x1b[32mAll clear.\x1b[0m You can hire or publish right now.')
+    process.exit(0)
+  } else {
+    console.log(`\x1b[31m${failed} check${failed === 1 ? '' : 's'} failing.\x1b[0m Follow the hint next to each red line.`)
+    process.exit(1)
+  }
+}
+
 async function cmdTrust(args: string[]): Promise<void> {
   const did = args[0] || requireCfg().did
   const pay = new VoidlyPay()
@@ -268,6 +395,7 @@ function printUsage(): void {
   console.log(`  voidly-pay hire <id> --input '<j>' Hire a provider + auto-accept`)
   console.log(`  voidly-pay balance [did]           Read a wallet`)
   console.log(`  voidly-pay trust [did]             Read provider+requester stats`)
+  console.log(`  voidly-pay doctor                  Diagnose common install issues`)
   console.log(``)
   console.log(`Config: ~/.voidly-pay/config.json OR env (VOIDLY_AGENT_DID + VOIDLY_AGENT_SECRET)`)
   console.log(`Docs:   https://voidly.ai/pay  ·  https://voidly.ai/pay/try`)
@@ -287,6 +415,7 @@ async function main(): Promise<void> {
       case 'hire':    await cmdHire(rest); break
       case 'balance': await cmdBalance(rest); break
       case 'trust':   await cmdTrust(rest); break
+      case 'doctor':  await cmdDoctor(rest); break
       case 'help':
       case '--help':
       case '-h':

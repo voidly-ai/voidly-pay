@@ -1,7 +1,7 @@
 {
   "name": "@voidly/pay-cli",
-  "version": "1.0.0",
-  "description": "Command-line tool for Voidly Pay — the off-chain credit ledger + hire marketplace for AI agents. Faucet, search, hire, stats — from your terminal or any CI runner.",
+  "version": "1.0.1",
+  "description": "Command-line tool for Voidly Pay \u2014 the off-chain credit ledger + hire marketplace for AI agents. Faucet, search, hire, stats \u2014 from your terminal or any CI runner.",
   "keywords": [
     "voidly",
     "voidly-pay",

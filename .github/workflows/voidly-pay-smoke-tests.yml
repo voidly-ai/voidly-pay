@@ -136,9 +136,53 @@ jobs:
           # exit 124 = timeout killed it, which is the expected "kept running" outcome.
           echo "mcp-server spawn OK"
 
-  # ── 6. Python framework adapters: they all import cleanly ───────────
-  python-adapters:
-    name: "Python adapters — import check"
+  # ── 6a. Python adapters: install + factory-call from source in-repo ─
+  python-adapters-source:
+    name: "Python adapter source: ${{ matrix.adapter }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - adapter: langchain
+            package_dir: adapters/langchain
+            module: voidly_pay_langchain
+            factory: voidly_pay_tools
+          - adapter: crewai
+            package_dir: adapters/crewai
+            module: voidly_pay_crewai
+            factory: voidly_pay_tools
+          - adapter: autogen
+            package_dir: adapters/autogen
+            module: voidly_pay_autogen
+            factory: voidly_pay_tools
+          - adapter: llamaindex
+            package_dir: adapters/llamaindex
+            module: voidly_pay_llamaindex
+            factory: voidly_pay_tools
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: install adapter from source + call factory
+        run: |
+          set -e
+          pip install --quiet ./${{ matrix.package_dir }} 'voidly-pay'
+          python - <<EOF
+          import importlib, inspect
+          m = importlib.import_module("${{ matrix.module }}")
+          f = getattr(m, "${{ matrix.factory }}", None)
+          assert f is not None, f"${{ matrix.module }}.${{ matrix.factory }} is missing"
+          sig = inspect.signature(f)
+          assert len(sig.parameters) >= 1, "factory must accept a config argument"
+          # Version check (non-fatal).
+          print(f"${{ matrix.module }} OK — factory signature: {sig}, version = {getattr(m, '__version__', '?')}")
+          EOF
+
+  # ── 6b. Python adapters: check published PyPI packages still install ─
+  python-adapters-pypi:
+    name: "Python adapter PyPI: ${{ matrix.package }}"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -152,8 +196,8 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
-      - name: pip install + import
-        continue-on-error: true   # not all are published yet; report but don't break the gate
+      - name: pip install + import (non-fatal if not yet published)
+        continue-on-error: true
         run: |
           pip install --quiet ${{ matrix.package }}
           python -c "
@@ -162,6 +206,51 @@ jobs:
           m = importlib.import_module(mod)
           print(f'{mod} OK. version =', getattr(m, '__version__', '?'))
           "
+
+  # ── 6c. JS adapters: install deps + verify export shape from source ─
+  js-adapters-source:
+    name: "JS adapter source: ${{ matrix.adapter }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - adapter: openai-compat
+            package_dir: adapters/openai-compat
+            entry: server.js
+            expected_endpoints: "/v1/chat/completions"
+          - adapter: x402
+            package_dir: adapters/x402
+            entry: server.js
+            expected_endpoints: "/x402/"
+          - adapter: a2a
+            package_dir: adapters/a2a
+            entry: server.js
+            expected_endpoints: "/.well-known/agent-card.json"
+          - adapter: vercel-ai
+            package_dir: adapters/vercel-ai
+            entry: src/index.ts
+            expected_endpoints: "voidlyPayTools"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: install deps in ${{ matrix.package_dir }}
+        working-directory: ${{ matrix.package_dir }}
+        run: npm install --silent --no-audit --no-fund
+      - name: static check for expected endpoints/exports
+        working-directory: ${{ matrix.package_dir }}
+        run: |
+          if ! grep -q "${{ matrix.expected_endpoints }}" "${{ matrix.entry }}"; then
+            echo "::error::expected token '${{ matrix.expected_endpoints }}' not found in ${{ matrix.entry }}"
+            exit 1
+          fi
+          echo "${{ matrix.adapter }} OK — ${{ matrix.entry }} contains the expected surface token"
+      - name: node --check (syntax) for .js entry
+        if: endsWith(matrix.entry, '.js')
+        working-directory: ${{ matrix.package_dir }}
+        run: node --check "${{ matrix.entry }}"
 
   # ── 7. JSON surfaces parse + contain expected keys ──────────────────
   json-surfaces:
@@ -251,6 +340,8 @@ jobs:
       - pay-cli
       - pay-hydra
       - mcp-server
+      - python-adapters-source
+      - js-adapters-source
       - json-surfaces
       - terraform-lint
       - openapi-validate
