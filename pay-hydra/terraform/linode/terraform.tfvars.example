@@ -1,0 +1,20 @@
+# Rename to terraform.tfvars before `terraform apply`.
+
+# Required
+linode_token  = "CHANGEME"          # or: export LINODE_TOKEN=...
+root_password = "CHANGEME-long-random-string"
+
+# Strongly recommended
+# authorized_keys = ["ssh-ed25519 AAAA... my-laptop"]
+
+# Optional overrides
+# region              = "us-east"              # us-east us-west eu-west ap-south etc.
+# instance_type       = "g6-nanode-1"          # ~$5/mo, 1GB RAM, 1 vCPU
+# image               = "linode/ubuntu24.04"
+# hydra_capability    = "hash.sha256"
+# hydra_price_credits = 0.0005
+# hydra_sla_hours     = 1
+# hydra_version       = "^1.0.0"
+
+# Close SSH entirely (default) or scope to your IP.
+# operator_ip_cidrs = ["1.2.3.4/32"]

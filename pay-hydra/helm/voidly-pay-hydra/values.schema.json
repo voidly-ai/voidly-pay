@@ -110,7 +110,9 @@
       "additionalProperties": false,
       "properties": {
         "enabled": { "type": "boolean" },
-        "egressHosts": { "type": "array", "items": { "type": "string" } }
+        "egressHosts": { "type": "array", "items": { "type": "string" } },
+        "egressCidrs": { "type": "array", "items": { "type": "string" } },
+        "allowRegistry": { "type": "boolean" }
       }
     },
     "nodeSelector": { "type": "object" },

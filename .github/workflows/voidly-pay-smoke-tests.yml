@@ -298,6 +298,8 @@ jobs:
           - pay-hydra/terraform/digitalocean
           - pay-hydra/terraform/aws-lightsail
           - pay-hydra/terraform/hetzner
+          - pay-hydra/terraform/linode
+          - pay-hydra/terraform/vultr
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3

@@ -97,13 +97,20 @@ containerSecurityContext:
 automountServiceAccountToken: false
 
 # Optional NetworkPolicy restricting egress to the Voidly Pay API.
-# Not enabled by default — too easy to misconfigure on clusters without
-# Calico/Cilium/etc.; enable when you know what you're doing.
+# Requires a CNI that enforces NetworkPolicy (Calico, Cilium, Antrea, etc).
+# Safe to enable on any cluster with one of those; renders without effect
+# on plain kube-proxy / flannel. Check your cluster before relying on it.
 networkPolicy:
   enabled: false
-  # Egress allow-list if enabled. DNS is always allowed.
+  # Informational — used by docs, not enforced by the default policy.
+  # For true hostname-level pinning use Cilium + toFQDNs in a fork.
   egressHosts:
     - api.voidly.ai
+  # Extra CIDRs to allow 443 egress to (e.g. a private mirror). Optional.
+  egressCidrs: []
+  # Allow egress to npm / PyPI / Docker-Hub registries. Only needed if
+  # the pod installs packages at runtime — default image does not.
+  allowRegistry: false
 
 nodeSelector: {}
 tolerations: []

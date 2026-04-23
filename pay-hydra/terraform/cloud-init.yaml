@@ -10,7 +10,10 @@
 #   ${hydra_price_credits}
 #   ${hydra_sla_hours}
 #   ${voidly_api}
-#   ${hydra_version}         (npm semver range, e.g. "^1.0.0")
+#   ${hydra_version}           (npm semver range, e.g. "^1.0.0")
+#   ${extra_capabilities_json} (JSON array of {slug,price_credits,sla_hours}
+#                              published after the primary capability boots,
+#                              or "[]" for none. Defaulted by Terraform.)
 
 package_update: true
 package_upgrade: true
@@ -77,16 +80,49 @@ write_files:
     owner: root:root
     content: |
       #!/bin/sh
-      # Boot health check. Runs after systemctl enables the service.
-      # Polls :8420/healthz for up to 5 minutes; writes a sentinel file
-      # so `terraform apply` completers can verify the node is live via
+      # Boot health check + optional extra-capability publish loop.
+      #
+      # Runs after systemctl enables the service. Polls :8420/healthz
+      # for up to 5 minutes; writes a sentinel file so `terraform apply`
+      # completers can verify the node is live via
       #   ssh <ip> 'test -f /opt/voidly-hydra/.boot-ok && echo ready'
+      #
+      # Once the primary capability is up, if ${extra_capabilities_json}
+      # is a non-empty array, publishes each entry via `voidly-hydra
+      # publish`. Uses the user-level `npx` so version pinning matches
+      # the main service.
       set -eu
       deadline=$(( $(date +%s) + 300 ))
       while [ "$(date +%s)" -lt "$deadline" ]; do
         if curl -fsS --max-time 3 http://127.0.0.1:8420/healthz >/dev/null 2>&1; then
           touch /opt/voidly-hydra/.boot-ok
           echo "[boot-check] healthz OK" | systemd-cat -t voidly-hydra-boot-check
+
+          # Extra-capability publish loop. Iterates ${extra_capabilities_json}
+          # which Terraform renders as a real JSON array. Empty array is a no-op.
+          EXTRAS='${extra_capabilities_json}'
+          if [ "$EXTRAS" != "[]" ] && [ -n "$EXTRAS" ]; then
+            echo "[boot-check] publishing extras: $EXTRAS" | systemd-cat -t voidly-hydra-boot-check
+            # Use python3 (installed on every ubuntu-24.04 base) to parse JSON safely.
+            echo "$EXTRAS" | python3 -c '
+          import sys, json, subprocess
+          items = json.load(sys.stdin)
+          for it in items:
+              slug = it.get("slug")
+              price = it.get("price_credits", 0.0005)
+              if not slug:
+                  continue
+              try:
+                  subprocess.check_call([
+                      "sudo", "-u", "voidly-hydra",
+                      "env", "HYDRA_HOME=/opt/voidly-hydra",
+                      "npx", "--yes", "@voidly/pay-hydra@${hydra_version}",
+                      "publish", slug, str(price),
+                  ])
+              except Exception as e:
+                  print(f"publish {slug} failed: {e}", file=sys.stderr)
+            '
+          fi
           exit 0
         fi
         sleep 5

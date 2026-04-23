@@ -56,6 +56,16 @@ variable "voidly_api" {
   default     = "https://api.voidly.ai"
 }
 
+variable "extra_capabilities" {
+  description = "Additional capabilities to publish on first boot, beyond var.hydra_capability. Each is {slug, price_credits, sla_hours}. Published after primary capability + healthz passes. `voidly-hydra publish` upserts so reapplying is safe."
+  type = list(object({
+    slug          = string
+    price_credits = number
+    sla_hours     = optional(number, 1)
+  }))
+  default = []
+}
+
 variable "key_pair_name" {
   description = "Optional Lightsail key pair name to install. Without this, Lightsail auto-generates a key you need to download from the AWS console — fine for one-off nodes, awkward for fleets."
   type        = string
@@ -92,11 +102,12 @@ resource "aws_lightsail_instance" "hydra" {
   key_pair_name     = var.key_pair_name
 
   user_data = templatefile("${path.module}/../cloud-init.yaml", {
-    hydra_capability    = var.hydra_capability
-    hydra_price_credits = var.hydra_price_credits
-    hydra_sla_hours     = var.hydra_sla_hours
-    hydra_version       = var.hydra_version
-    voidly_api          = var.voidly_api
+    hydra_capability        = var.hydra_capability
+    hydra_price_credits     = var.hydra_price_credits
+    hydra_sla_hours         = var.hydra_sla_hours
+    hydra_version           = var.hydra_version
+    voidly_api              = var.voidly_api
+    extra_capabilities_json = jsonencode(var.extra_capabilities)
   })
 
   tags = {

@@ -56,6 +56,16 @@ variable "voidly_api" {
   default     = "https://api.voidly.ai"
 }
 
+variable "extra_capabilities" {
+  description = "Additional capabilities to publish on first boot, beyond var.hydra_capability. Each is {slug, price_credits, sla_hours}. Published after primary capability + healthz passes. `voidly-hydra publish` upserts so reapplying is safe."
+  type = list(object({
+    slug          = string
+    price_credits = number
+    sla_hours     = optional(number, 1)
+  }))
+  default = []
+}
+
 variable "ssh_key_fingerprints" {
   description = "Optional list of SSH key fingerprints on your DO account to preinstall. Strongly recommended — without this you cannot recover the DID key file at /opt/voidly-hydra/keys/active.json if the droplet ever misbehaves."
   type        = list(string)
@@ -93,11 +103,12 @@ resource "digitalocean_droplet" "hydra" {
   tags     = ["voidly-pay", "hydra", "provider"]
 
   user_data = templatefile("${path.module}/../cloud-init.yaml", {
-    hydra_capability    = var.hydra_capability
-    hydra_price_credits = var.hydra_price_credits
-    hydra_sla_hours     = var.hydra_sla_hours
-    hydra_version       = var.hydra_version
-    voidly_api          = var.voidly_api
+    hydra_capability        = var.hydra_capability
+    hydra_price_credits     = var.hydra_price_credits
+    hydra_sla_hours         = var.hydra_sla_hours
+    hydra_version           = var.hydra_version
+    voidly_api              = var.voidly_api
+    extra_capabilities_json = jsonencode(var.extra_capabilities)
   })
 
   lifecycle {

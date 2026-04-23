@@ -62,6 +62,16 @@ variable "voidly_api" {
   default     = "https://api.voidly.ai"
 }
 
+variable "extra_capabilities" {
+  description = "Additional capabilities to publish on first boot, beyond var.hydra_capability. Each is {slug, price_credits, sla_hours}. Published after primary capability + healthz passes. `voidly-hydra publish` upserts so reapplying is safe."
+  type = list(object({
+    slug          = string
+    price_credits = number
+    sla_hours     = optional(number, 1)
+  }))
+  default = []
+}
+
 variable "ssh_key_names" {
   description = "Optional list of SSH key names already uploaded to the Hetzner Cloud project. Strongly recommended — without this you cannot recover the DID key file at /opt/voidly-hydra/keys/active.json if the server ever misbehaves."
   type        = list(string)
@@ -104,11 +114,12 @@ resource "hcloud_server" "hydra" {
   ssh_keys    = [for k in data.hcloud_ssh_key.operator_keys : k.id]
 
   user_data = templatefile("${path.module}/../cloud-init.yaml", {
-    hydra_capability    = var.hydra_capability
-    hydra_price_credits = var.hydra_price_credits
-    hydra_sla_hours     = var.hydra_sla_hours
-    hydra_version       = var.hydra_version
-    voidly_api          = var.voidly_api
+    hydra_capability        = var.hydra_capability
+    hydra_price_credits     = var.hydra_price_credits
+    hydra_sla_hours         = var.hydra_sla_hours
+    hydra_version           = var.hydra_version
+    voidly_api              = var.voidly_api
+    extra_capabilities_json = jsonencode(var.extra_capabilities)
   })
 
   labels = {

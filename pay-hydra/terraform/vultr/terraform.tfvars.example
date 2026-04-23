@@ -1,0 +1,17 @@
+# Rename to terraform.tfvars before `terraform apply`.
+
+vultr_api_key = "CHANGEME"     # or: export VULTR_API_KEY=...
+
+# Optional
+# region              = "ewr"              # ewr lax fra sgp etc.
+# plan                = "vc2-1c-1gb"       # ~$6/mo, 1GB/1vCPU. vhf-1c-1gb = high-freq
+# os_id               = 1743               # Ubuntu 24.04
+# hydra_capability    = "hash.sha256"
+# hydra_price_credits = 0.0005
+# hydra_sla_hours     = 1
+
+# Strongly recommended — upload SSH keys to Vultr first:
+# https://my.vultr.com/settings/#settingssshkeys — then paste IDs here.
+# ssh_key_ids = ["abc123-abc-abc"]
+
+# operator_ip_cidrs = ["1.2.3.4/32"]

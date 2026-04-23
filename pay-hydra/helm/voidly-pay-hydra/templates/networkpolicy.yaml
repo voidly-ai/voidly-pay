@@ -1,0 +1,99 @@
+{{/*
+NetworkPolicy — rendered only when networkPolicy.enabled=true.
+
+Default intent: "this pod talks to api.voidly.ai and DNS, nothing else."
+For clusters with a default-deny egress policy, this is what makes Hydra
+function at all. For clusters without, this narrows the blast radius
+of a compromised pod.
+
+Requires a CNI that enforces NetworkPolicy (Calico, Cilium, Antrea, etc).
+On plain kube-proxy / flannel this renders without effect.
+
+Values:
+  networkPolicy.enabled        bool  (default false — policy is strict)
+  networkPolicy.egressHosts    list  (default [api.voidly.ai])
+  networkPolicy.egressCidrs    list  (default [] — adds raw CIDR allows)
+  networkPolicy.allowRegistry  bool  (default false — set true if pods
+                                     install npm packages at runtime,
+                                     e.g. `@latest` reconciling)
+*/}}
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "voidly-pay-hydra.fullname" . }}
+  labels:
+    {{- include "voidly-pay-hydra.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "voidly-pay-hydra.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  # Ingress — only the Service + ingress controller namespaces can reach :8420.
+  ingress:
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              {{- include "voidly-pay-hydra.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.hydra.port }}
+    {{- if .Values.ingress.enabled }}
+    # Allow the cluster ingress controller through. Tighten via a
+    # namespaceSelector if you know your ingress controller's namespace.
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.hydra.port }}
+    {{- end }}
+  egress:
+    # DNS — required for every other egress rule to resolve.
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # HTTPS to api.voidly.ai (and anything else in egressHosts).
+    # NetworkPolicy doesn't support hostname selectors in core — we allow
+    # 443 to all external IPs and rely on NodeLocal DNS / ExternalName
+    # service + CNI's cidrSelector for hostname pinning. Cilium +
+    # `toFQDNs` is the way to get true hostname-level restriction.
+    - ports:
+        - protocol: TCP
+          port: 443
+      to:
+        # Operators using Cilium: convert this to toFQDNs for real
+        # hostname pinning. Kept as a raw 443 allow for broad CNI compat.
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              # Block traffic to internal / RFC1918 ranges by default so
+              # a compromised pod can't pivot inside the cluster over 443.
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+              - 169.254.0.0/16
+    {{- if .Values.networkPolicy.allowRegistry }}
+    # npm/pypi/Docker registry egress (only when explicitly enabled —
+    # Hydra doesn't need this once the image is built).
+    - ports:
+        - protocol: TCP
+          port: 443
+      to:
+        - ipBlock: { cidr: 0.0.0.0/0 }
+    {{- end }}
+    {{- range .Values.networkPolicy.egressCidrs }}
+    - ports:
+        - protocol: TCP
+          port: 443
+      to:
+        - ipBlock: { cidr: {{ . }} }
+    {{- end }}
+{{- end }}
