@@ -1,25 +1,25 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-04-24T19:37:26.855Z",
-  "run_id": "24908314180",
+  "generated_at": "2026-04-24T20:27:50.295Z",
+  "run_id": "24910334503",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 332,
+    "latency_ms": 747,
     "counts": {
-      "wallets": 189,
+      "wallets": 191,
       "transfers_settled_24h": 0,
       "active_admin_keys": 1
     }
   },
   "stats_summary": {
-    "wallets": 189,
+    "wallets": 191,
     "active_capabilities": 16,
     "distinct_providers": 3,
-    "hires_total": 1778,
-    "hires_completed": 1682,
-    "value_settled_cr": 1.9718
+    "hires_total": 1792,
+    "hires_completed": 1695,
+    "value_settled_cr": 1.9824
   },
   "providers": [
     {
@@ -29,10 +29,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "94bd26cd-f3f5-4d55-8973-5dd5ae27e210",
+      "receipt_id": "7938a93a-cb17-489a-b496-a6712ab22965",
       "accepted": true,
       "verified": true,
-      "latency_ms": 7054
+      "latency_ms": 9233
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -41,10 +41,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "9919a62c-4d10-4e58-86b4-0bae263bc6a8",
+      "receipt_id": "e21519ae-dd17-4f2b-8e1a-64156f71db3e",
       "accepted": true,
       "verified": true,
-      "latency_ms": 9075
+      "latency_ms": 5078
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -52,8 +52,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire 4a518293-0364-4868-9011-350eb63fd30f did not reach claimed state (got requested)",
-      "latency_ms": 60696
+      "error": "hire c72816ee-6534-4f74-8dbc-46d48c5c43ba did not reach claimed state (got requested)",
+      "latency_ms": 61999
     }
   ],
   "ok": false,
