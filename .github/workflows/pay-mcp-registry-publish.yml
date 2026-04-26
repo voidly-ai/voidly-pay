@@ -1,0 +1,33 @@
+# Auto-publish @voidly/pay-mcp to the Anthropic MCP Registry whenever
+# pay-mcp/server.json changes on main. Uses GitHub OIDC so no manual
+# token rotation is needed.
+name: Publish pay-mcp to MCP Registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pay-mcp/server.json"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mcp-publisher
+        run: |
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m).tar.gz" | tar -xz
+          sudo mv mcp-publisher /usr/local/bin/
+      - name: Login (GitHub OIDC)
+        run: mcp-publisher login github-oidc
+      - name: Validate server.json
+        working-directory: pay-mcp
+        run: mcp-publisher validate
+      - name: Publish
+        working-directory: pay-mcp
+        run: mcp-publisher publish
