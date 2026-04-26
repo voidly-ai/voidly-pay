@@ -1,10 +1,11 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.voidly-ai/pay-mcp",
-  "description": "28-tool MCP server for the Voidly Pay rail — USDC-backed agent-to-agent payments on Base mainnet. Transfer credits, hire-and-release escrow, x402 paywall facilitator, hash-chained streams, subscriptions, on-chain deposits/withdrawals, plus a one-call pay.healthCheck() that returns a 6-check trust report (system frozen, vault on Base, source verified, on-chain USDC backing). Source-verified vault, public proof of reserves at /v1/pay/proof.",
+  "description": "USDC-backed agent payments. Transfer, escrow, x402 paywall, streams, subs. 28 tools.",
   "repository": {
     "url": "https://github.com/voidly-ai/voidly-pay",
-    "source": "github"
+    "source": "github",
+    "subfolder": "pay-mcp"
   },
   "version": "0.1.2",
   "packages": [
@@ -18,7 +19,7 @@
       "environmentVariables": [
         {
           "name": "VOIDLY_PAY_API_URL",
-          "description": "Override the API base. Defaults to https://api.voidly.ai. Useful for self-hosted Voidly Pay deployments or staging.",
+          "description": "Override the API base. Defaults to https://api.voidly.ai.",
           "isRequired": false,
           "format": "string",
           "isSecret": false
