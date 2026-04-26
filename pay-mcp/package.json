@@ -1,6 +1,6 @@
 {
   "name": "@voidly/pay-mcp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MCP server exposing Voidly Pay tools (transfer, escrow, x402, streams, subscriptions, webhooks, observability) to Claude Code, Cursor, Windsurf, and any MCP-compatible client.",
   "type": "module",
   "main": "dist/index.cjs",
@@ -72,5 +72,6 @@
   },
   "bugs": {
     "url": "https://github.com/voidly-ai/voidly-pay/issues"
-  }
+  },
+  "mcpName": "io.github.voidly-ai/pay-mcp"
 }
