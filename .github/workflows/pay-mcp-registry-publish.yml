@@ -21,8 +21,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install mcp-publisher
         run: |
-          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m).tar.gz" | tar -xz
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+          ARCH=$(uname -m)
+          case "$ARCH" in
+            x86_64) ARCH=amd64 ;;
+            aarch64|arm64) ARCH=arm64 ;;
+          esac
+          TARBALL="mcp-publisher_${OS}_${ARCH}.tar.gz"
+          echo "Downloading $TARBALL"
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/${TARBALL}" | tar -xz
           sudo mv mcp-publisher /usr/local/bin/
+          mcp-publisher --help | head -5
       - name: Login (GitHub OIDC)
         run: mcp-publisher login github-oidc
       - name: Validate server.json
