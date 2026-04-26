@@ -1,16 +1,16 @@
 {
   "schema": "voidly-pay-stale/v1",
-  "updated_at": "2026-04-26T00:01:38.840Z",
+  "updated_at": "2026-04-26T03:57:18.205Z",
   "status": "seeded",
   "capabilities": {
     "e00a3caf-5090-4414-aab9-89e5420bf871": {
       "streak_failed": 0,
-      "total_runs": 105,
+      "total_runs": 106,
       "total_failed": 0,
-      "total_ok": 105,
+      "total_ok": 106,
       "first_seen": "2026-04-20T14:04:08.690Z",
       "last_fail": null,
-      "last_ok": "2026-04-26T00:00:11.845Z",
+      "last_ok": "2026-04-26T03:54:03.574Z",
       "did": "did:voidly:AsAVzZ2dtMrntgGRco8KkW",
       "capability": "hash.sha256",
       "price_micro": 800,
@@ -18,34 +18,62 @@
     },
     "1b32805f-07e0-426e-a7a2-53ac41396303": {
       "streak_failed": 0,
-      "total_runs": 105,
+      "total_runs": 106,
       "total_failed": 0,
-      "total_ok": 105,
+      "total_ok": 106,
       "first_seen": "2026-04-20T14:04:08.690Z",
       "last_fail": null,
-      "last_ok": "2026-04-26T00:00:11.845Z",
+      "last_ok": "2026-04-26T03:54:03.574Z",
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
       "capability": "hash.sha256",
       "price_micro": 1000,
       "stale": false
     },
     "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c": {
-      "streak_failed": 105,
-      "total_runs": 105,
-      "total_failed": 105,
+      "streak_failed": 106,
+      "total_runs": 106,
+      "total_failed": 106,
       "total_ok": 0,
       "first_seen": "2026-04-20T14:04:08.690Z",
-      "last_fail": "2026-04-26T00:00:11.845Z",
+      "last_fail": "2026-04-26T03:54:03.574Z",
       "last_ok": null,
       "did": "did:voidly:mkt-b-1776622972",
       "capability": "translate",
       "price_micro": 500000,
-      "last_error": "hire f229a54f-e618-4cc2-8710-5f2d9a598156 did not reach claimed state (got requested)",
+      "last_error": "hire 0ad1ff81-5c1a-4591-ab3c-4e15edcc414e did not reach claimed state (got requested)",
       "stale": true
+    },
+    "ea0ac3a8-b35c-44c2-bf76-4c964c8dd559": {
+      "streak_failed": 1,
+      "total_runs": 1,
+      "total_failed": 1,
+      "total_ok": 0,
+      "first_seen": "2026-04-26T03:54:03.574Z",
+      "last_fail": "2026-04-26T03:54:03.574Z",
+      "last_ok": null,
+      "did": "did:voidly:3bzjV3jSMCuTwZ6NRzrS8m",
+      "capability": "echo.text-1777170066728",
+      "price_micro": 100,
+      "last_error": "hire dc6fde4e-0746-4df2-9937-7543202bd5e6 did not reach claimed state (got requested)",
+      "stale": false
+    },
+    "4f862bbb-050b-47a6-a189-71a23d10b936": {
+      "streak_failed": 1,
+      "total_runs": 1,
+      "total_failed": 1,
+      "total_ok": 0,
+      "first_seen": "2026-04-26T03:54:03.574Z",
+      "last_fail": "2026-04-26T03:54:03.574Z",
+      "last_ok": null,
+      "did": "did:voidly:Ck56rQkhsBe3bJa62bg81t",
+      "capability": "echo.text-1777170057372",
+      "price_micro": 100,
+      "last_error": "hire ac06c7ef-36ef-4a52-9e70-b4388ecc2c3c did not reach claimed state (got requested)",
+      "stale": false
     }
   },
   "summary": {
-    "total_tracked": 3,
+    "total_tracked": 5,
     "currently_stale": 1
   }
 }
