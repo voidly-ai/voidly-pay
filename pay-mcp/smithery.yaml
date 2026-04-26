@@ -1,0 +1,15 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      apiUrl:
+        type: string
+        description: API base URL (default https://api.voidly.ai)
+        default: https://api.voidly.ai
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["@voidly/pay-mcp"],
+      env: config.apiUrl ? { VOIDLY_PAY_API_URL: config.apiUrl } : {}
+    })
