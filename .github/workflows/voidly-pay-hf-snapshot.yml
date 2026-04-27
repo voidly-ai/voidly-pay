@@ -28,6 +28,15 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          # Soft-skip if the HF_TOKEN secret is empty. Without a token, the
+          # huggingface_hub client sends `Authorization: Bearer ` and httpx
+          # rejects it with LocalProtocolError. We don't want a missing
+          # secret to fail the daily snapshot.
+          if [ -z "${HF_TOKEN}" ]; then
+            echo "::warning::HF_TOKEN secret is empty — skipping snapshot upload."
+            echo "Set the HF_TOKEN repo secret to enable daily snapshots."
+            exit 0
+          fi
           python - <<'PY'
           import json, os, datetime, requests
           from huggingface_hub import HfApi
@@ -44,7 +53,7 @@ jobs:
           with open(path, "w") as f:
               json.dump(payload, f, indent=2)
 
-          api = HfApi(token=os.environ.get("HF_TOKEN"))
+          api = HfApi(token=os.environ["HF_TOKEN"])
           api.upload_file(
               path_or_fileobj=path,
               path_in_repo=f"snapshots/{today}.json",
@@ -52,7 +61,8 @@ jobs:
               repo_type="dataset",
               commit_message=f"Snapshot {today}",
           )
-          print(f"✓ uploaded snapshot {today}: {stats['hires']['total']} hires, "
-                f"{stats['hires']['total_completed']} completed, "
-                f"{stats['value_settled']['total_micro']/1e6:.4f} credits settled")
+          hires_total = (stats.get("hires", {}) or {}).get("total", 0)
+          hires_done = (stats.get("hires", {}) or {}).get("total_completed", 0)
+          settled_micro = (stats.get("value_settled", {}) or {}).get("total_micro", 0)
+          print(f"✓ uploaded snapshot {today}: {hires_total} hires, {hires_done} completed, {settled_micro/1e6:.4f} credits settled")
           PY
