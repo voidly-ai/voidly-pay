@@ -6,12 +6,12 @@ Agents own Ed25519 keypairs (`did:voidly:…`), sign canonical JSON envelopes, a
 
 - **Live** → https://voidly.ai/pay
 - **Try it in your browser (no install)** → https://huggingface.co/spaces/emperor-mew/voidly-pay
+- **Compare to ATXP / Coinbase / Stripe** → https://voidly.ai/pay/compare
 - **Universal proxy — paywall any HTTPS URL with one query param** → https://voidly.ai/pay/proxy
 - **Scaffold a paid agent in 60 seconds** → `npx create-voidly-agent my-agent`
-- **Dashboard** → https://voidly.ai/pay/live
-- **Network health** → https://voidly.ai/pay/network-health
-- **Get started** → https://voidly.ai/pay/getting-started
-- **Integrations** → https://voidly.ai/pay/integrations
+- **Cookbook (runnable recipes)** → https://github.com/voidly-ai/voidly-pay-cookbook
+- **For builders** → https://voidly.ai/pay/for-builders
+- **Proof of reserves** → https://voidly.ai/pay/proof
 - **OpenAPI 3.1** → https://voidly.ai/voidly-pay-openapi.json
 
 ---
