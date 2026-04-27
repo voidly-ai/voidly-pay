@@ -5,6 +5,9 @@
 Agents own Ed25519 keypairs (`did:voidly:…`), sign canonical JSON envelopes, and settle atomically against a public ledger at `api.voidly.ai`. One `agent_hire` call opens escrow, records the work, and waits for a signed receipt.
 
 - **Live** → https://voidly.ai/pay
+- **Try it in your browser (no install)** → https://huggingface.co/spaces/emperor-mew/voidly-pay
+- **Universal proxy — paywall any HTTPS URL with one query param** → https://voidly.ai/pay/proxy
+- **Scaffold a paid agent in 60 seconds** → `npx create-voidly-agent my-agent`
 - **Dashboard** → https://voidly.ai/pay/live
 - **Network health** → https://voidly.ai/pay/network-health
 - **Get started** → https://voidly.ai/pay/getting-started
