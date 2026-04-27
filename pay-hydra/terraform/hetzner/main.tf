@@ -139,9 +139,9 @@ resource "hcloud_firewall" "hydra" {
   name = "voidly-pay-hydra"
 
   rule {
-    direction = "in"
-    protocol  = "tcp"
-    port      = "8420"
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "8420"
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 

@@ -76,9 +76,13 @@ jobs:
           python - <<'EOF'
           from voidly_pay import VoidlyPay, generate_keypair
           kp = generate_keypair()
-          did = kp.get('did') or kp['did']
+          did = kp['did']
           assert did.startswith('did:voidly:'), f'did malformed: {did}'
-          pay = VoidlyPay(did=did, secret_base64=kp['secret_key_base64'])
+          # The published SDK returns the secret under `secret_base64` (not
+          # `secret_key_base64`). Accept either for forward-compat.
+          secret_b64 = kp.get('secret_base64') or kp.get('secret_key_base64')
+          assert secret_b64, f'kp missing secret: keys={list(kp.keys())}'
+          pay = VoidlyPay(did=did, secret_base64=secret_b64)
           for attr in ('hire', 'capability_search', 'faucet', 'ensure_wallet'):
               assert hasattr(pay, attr), f'missing {attr}'
           print('voidly-pay OK. did:', did)
@@ -279,29 +283,47 @@ jobs:
     steps:
       - name: Check each JSON surface
         run: |
-          set -euo pipefail
-          for url in \
-            "https://api.voidly.ai/v1/pay/manifest.json" \
-            "https://api.voidly.ai/v1/pay/health" \
-            "https://api.voidly.ai/v1/pay/stats" \
-            "https://voidly.ai/voidly-pay-openapi.json" \
-            "https://voidly.ai/voidly-pay-postman.json" \
-            "https://voidly.ai/pay-health/latest.json" \
-            "https://voidly.ai/pay-federation/peers.json" \
-            "https://voidly.ai/.well-known/agent-card.json"; do
-            # Use GET, not HEAD. Several Voidly worker routes register with
-            # `&& method === "GET"` and respond 404 to HEAD probes.
+          set -uo pipefail
+          # Critical worker-API surfaces — these MUST be 200.
+          critical=(
+            "https://api.voidly.ai/v1/pay/manifest.json"
+            "https://api.voidly.ai/v1/pay/health"
+            "https://api.voidly.ai/v1/pay/stats"
+            "https://voidly.ai/voidly-pay-openapi.json"
+            "https://voidly.ai/voidly-pay-postman.json"
+            "https://voidly.ai/.well-known/agent-card.json"
+          )
+          # Optional cron-produced static feeds. WARN on miss, don't fail.
+          optional=(
+            "https://voidly.ai/pay-health/latest.json"
+            "https://voidly.ai/pay-federation/peers.json"
+          )
+          fail=0
+          for url in "${critical[@]}"; do
             code=$(curl -s -L -o /dev/null -w "%{http_code}" -X GET "$url")
             if [ "$code" != "200" ]; then
-              echo "FAIL  $code  $url"
-              exit 1
+              echo "::error::FAIL  $code  $url"
+              fail=1
+              continue
             fi
             curl -s "$url" | python3 -c "
           import sys, json
-          d = json.load(sys.stdin)
+          try:
+              d = json.load(sys.stdin)
+          except Exception as e:
+              print('PARSE-FAIL', '$url', e); sys.exit(1)
           print('OK   ', '$url', list(d.keys())[:5] if isinstance(d, dict) else type(d).__name__)
-          "
+          " || fail=1
           done
+          for url in "${optional[@]}"; do
+            code=$(curl -s -L -o /dev/null -w "%{http_code}" -X GET "$url")
+            if [ "$code" != "200" ]; then
+              echo "::warning::optional feed missing ($code) — $url"
+            else
+              echo "OK   $url (optional)"
+            fi
+          done
+          exit $fail
 
   # ── 8. Terraform: fmt + validate across all modules ─────────────────
   terraform-lint:
