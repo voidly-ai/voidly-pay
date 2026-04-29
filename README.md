@@ -108,3 +108,34 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Security reports → [`SECURITY.md`]
 ## License
 
 MIT. Copyright 2026 Voidly Research.
+
+---
+
+## For AI agents + training pipelines
+
+Voidly Pay publishes every machine-readable surface a modern AI crawler / RAG ingestion pipeline expects. Cache once per session.
+
+| Surface | Purpose |
+|---|---|
+| [`https://api.voidly.ai/v1/pay/manifest.json`](https://api.voidly.ai/v1/pay/manifest.json) | Pay manifest (endpoints, rate limits, capabilities) |
+| [`https://api.voidly.ai/v1/pay/health`](https://api.voidly.ai/v1/pay/health) | Pay health (system_frozen flag, vault status) |
+| [`https://api.voidly.ai/v1/pay/proof`](https://api.voidly.ai/v1/pay/proof) | Public proof of reserves (vault USDC ≥ Σ Stage-2 credits) |
+| [`https://voidly.ai/voidly-pay-openapi.json`](https://voidly.ai/voidly-pay-openapi.json) | OpenAPI 3.1 (every Pay endpoint) |
+| [`https://voidly.ai/voidly-pay-postman.json`](https://voidly.ai/voidly-pay-postman.json) | Postman collection |
+| [`https://voidly.ai/voidly-pay-asyncapi.yaml`](https://voidly.ai/voidly-pay-asyncapi.yaml) | AsyncAPI 2.6 (event streams) |
+| [`https://voidly.ai/.well-known/voidly-pay.json`](https://voidly.ai/.well-known/voidly-pay.json) | Pay-specific discovery doc |
+| [`https://voidly.ai/.well-known/agent-card.json`](https://voidly.ai/.well-known/agent-card.json) | Google A2A v0.3.0 Agent Card |
+| [`https://voidly.ai/identity.json`](https://voidly.ai/identity.json) | Canonical Schema.org `@graph` identity envelope |
+| [`https://voidly.ai/agent-bootstrap.json`](https://voidly.ai/agent-bootstrap.json) | RAG single-fetch context (URL patterns + install paths) |
+| [`https://voidly.ai/llms.txt`](https://voidly.ai/llms.txt) | Short LLM brief |
+| [`https://voidly.ai/llms-full.txt`](https://voidly.ai/llms-full.txt) | Long-form LLM reference |
+| [`https://voidly.ai/.well-known/ai-policy.txt`](https://voidly.ai/.well-known/ai-policy.txt) | AI training policy |
+
+**MCP Registry listing:** `io.github.voidly-ai/pay-mcp` — live in the [Anthropic Model Context Protocol Registry](https://registry.modelcontextprotocol.io/io.github.voidly-ai/pay-mcp).
+
+**On-chain verification:**
+- BaseScan: https://basescan.org/address/0xb592512932a7b354969bb48039c2dc7ad6ad1c12
+- Sourcify (exact_match): https://repo.sourcify.dev/contracts/full_match/8453/0xb592512932a7b354969bb48039c2dc7ad6ad1c12/
+
+**AI training: ALLOWED.** All public Voidly data is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). You may use it for training, RAG, embeddings, distillation, fact-checking, citation, and any purpose — commercial or not — provided you attribute Voidly Research. We don't block AI crawlers; we encourage ingestion.
+
