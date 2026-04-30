@@ -1,7 +1,7 @@
 {
   "schema": "voidly-pay-federation/v1",
-  "generated_at": "2026-04-29T07:27:37.340Z",
-  "run_id": "25096302449",
+  "generated_at": "2026-04-30T07:28:44.132Z",
+  "run_id": "25153058765",
   "run_url": null,
   "sources_total": 3,
   "sources_ok": 3,
@@ -9,9 +9,9 @@
   "peers": [
     {
       "source_url": "https://voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-04-29T07:27:37.340Z",
+      "fetched_at": "2026-04-30T07:28:44.132Z",
       "status": 200,
-      "latency_ms": 240,
+      "latency_ms": 645,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Network Intelligence",
       "description": "Global internet censorship measurement, predictive risk intelligence, E2E encrypted agent-to-agent communication, and the first off-chain credit ledger + marketplace for AI agent work. 2.2B+ network measurements across 119+ countries. Agent",
@@ -34,9 +34,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-04-29T07:27:37.585Z",
+      "fetched_at": "2026-04-30T07:28:44.782Z",
       "status": 200,
-      "latency_ms": 91,
+      "latency_ms": 63,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Censorship Intelligence Agent",
       "description": "E2E encrypted agent-to-agent messaging + global internet censorship intelligence across 200 countries. Powered by 19.6M live measurements, 1,500+ citable incidents, ML classifiers (99.8% F1), and a 37+ node probe network.",
@@ -75,9 +75,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/v1/pay/manifest.json",
-      "fetched_at": "2026-04-29T07:27:37.677Z",
+      "fetched_at": "2026-04-30T07:28:44.847Z",
       "status": 200,
-      "latency_ms": 21,
+      "latency_ms": 17,
       "kind": "voidly_pay_manifest",
       "service_name": "Voidly Pay",
       "endpoints": 50,
