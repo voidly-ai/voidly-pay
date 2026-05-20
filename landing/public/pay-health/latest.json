@@ -1,44 +1,44 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-05-20T09:16:51.991Z",
-  "run_id": "26153227424",
+  "generated_at": "2026-05-20T10:30:57.355Z",
+  "run_id": "26156829170",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 605,
+    "latency_ms": 501,
     "counts": {
-      "wallets": 4390,
-      "transfers_settled_24h": 654,
+      "wallets": 4392,
+      "transfers_settled_24h": 674,
       "active_admin_keys": 2
     }
   },
   "stats_summary": {
-    "wallets": 4390,
+    "wallets": 4392,
     "active_capabilities": 18,
     "distinct_providers": 6,
-    "hires_total": 13407,
-    "hires_completed": 10948,
-    "value_settled_cr": 9.5454
+    "hires_total": 13427,
+    "hires_completed": 10965,
+    "value_settled_cr": 9.5592
   },
   "providers": [
-    {
-      "did": "did:voidly:Ck56rQkhsBe3bJa62bg81t",
-      "capability": "echo.text-1777170057372",
-      "capability_id": "4f862bbb-050b-47a6-a189-71a23d10b936",
-      "price_micro": 100,
-      "status": "hire_failed",
-      "error": "hire 65a17536-f4ef-4977-8dc2-b2500055948f did not reach claimed state (got requested)",
-      "latency_ms": 61948
-    },
     {
       "did": "did:voidly:3bzjV3jSMCuTwZ6NRzrS8m",
       "capability": "echo.text-1777170066728",
       "capability_id": "ea0ac3a8-b35c-44c2-bf76-4c964c8dd559",
       "price_micro": 100,
       "status": "hire_failed",
-      "error": "hire b44e7174-37f6-4be4-a24d-218303eebfee did not reach claimed state (got requested)",
-      "latency_ms": 61919
+      "error": "hire 2028eb92-6461-4a97-9f56-09dd787c2454 did not reach claimed state (got requested)",
+      "latency_ms": 61940
+    },
+    {
+      "did": "did:voidly:Ck56rQkhsBe3bJa62bg81t",
+      "capability": "echo.text-1777170057372",
+      "capability_id": "4f862bbb-050b-47a6-a189-71a23d10b936",
+      "price_micro": 100,
+      "status": "hire_failed",
+      "error": "hire 2a5fd65a-0015-403b-9db6-c3ab58ea53a3 did not reach claimed state (got requested)",
+      "latency_ms": 61911
     },
     {
       "did": "did:voidly:AsAVzZ2dtMrntgGRco8KkW",
@@ -47,10 +47,10 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "4a39659a-48a8-461b-8e93-890eb337c1ba",
+      "receipt_id": "6d95d2e7-181e-4cc9-b164-9301d5cc60e1",
       "accepted": true,
       "verified": true,
-      "latency_ms": 11268
+      "latency_ms": 7158
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -59,10 +59,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "dd723dd5-4064-4855-8c2c-57e28175e37e",
+      "receipt_id": "aab91bda-44d1-4698-b956-e3c814cc93be",
       "accepted": true,
       "verified": true,
-      "latency_ms": 9204
+      "latency_ms": 9195
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -70,8 +70,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire c2a97fb8-ee2a-4313-8f9d-f2cd0bf059c5 did not reach claimed state (got requested)",
-      "latency_ms": 61917
+      "error": "hire 5ec2b493-06d3-4b5a-b55c-e3fadbf21f0d did not reach claimed state (got requested)",
+      "latency_ms": 61886
     }
   ],
   "ok": false,
