@@ -1,7 +1,7 @@
 {
   "schema": "voidly-pay-federation/v1",
-  "generated_at": "2026-05-23T07:29:13.255Z",
-  "run_id": "26326956290",
+  "generated_at": "2026-05-24T07:39:11.588Z",
+  "run_id": "26355369548",
   "run_url": null,
   "sources_total": 3,
   "sources_ok": 3,
@@ -9,9 +9,9 @@
   "peers": [
     {
       "source_url": "https://voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-05-23T07:29:13.255Z",
+      "fetched_at": "2026-05-24T07:39:11.588Z",
       "status": 200,
-      "latency_ms": 651,
+      "latency_ms": 551,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Network Intelligence",
       "description": "Global internet censorship measurement, predictive risk intelligence, E2E encrypted agent-to-agent communication, and the first off-chain credit ledger + marketplace for AI agent work. 2.2B+ network measurements across 119+ countries. Agent",
@@ -34,9 +34,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-05-23T07:29:13.911Z",
+      "fetched_at": "2026-05-24T07:39:12.144Z",
       "status": 200,
-      "latency_ms": 433,
+      "latency_ms": 355,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Censorship Intelligence Agent",
       "description": "E2E encrypted agent-to-agent messaging + global internet censorship intelligence across 200 countries. Powered by 19.6M live measurements, 1,500+ citable incidents, ML classifiers (99.8% F1), and a 37+ node probe network.",
@@ -48,6 +48,8 @@
         "get-censorship-index",
         "verify-censorship-claim",
         "get-risk-forecast",
+        "get-shutdown-risk",
+        "subscribe-shutdown-risk",
         "check-service-accessibility",
         "get-active-incidents",
         "discover-agents",
@@ -59,9 +61,7 @@
         "agent-memory",
         "data-export",
         "relay-federation",
-        "agent-heartbeat",
-        "key-pinning-tofu",
-        "read-receipts"
+        "agent-heartbeat"
       ],
       "capabilities": [
         "streaming",
@@ -75,9 +75,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/v1/pay/manifest.json",
-      "fetched_at": "2026-05-23T07:29:14.345Z",
+      "fetched_at": "2026-05-24T07:39:12.501Z",
       "status": 200,
-      "latency_ms": 20,
+      "latency_ms": 13,
       "kind": "voidly_pay_manifest",
       "service_name": "Voidly Pay",
       "endpoints": 50,
