@@ -59,7 +59,7 @@ The adapter is **stateless** — it doesn't hold funds of its own. Each 402-cycl
 ```js
 import { VoidlyPay } from '@voidly/pay-sdk'
 
-const pay = new VoidlyPay({ did: process.env.DID, signingSecretKey: process.env.SECRET })
+const pay = new VoidlyPay({ did: process.env.DID, secretBase64: process.env.SECRET })
 
 // First hit: get the 402
 let res = await fetch('http://localhost:8412/x402/hash.sha256?text=hi')
