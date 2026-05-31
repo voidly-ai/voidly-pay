@@ -22,7 +22,7 @@ if (!DID || !SECRET) {
   process.exit(1)
 }
 
-const pay = new VoidlyPay({ baseUrl: API, did: DID, signingSecretKey: SECRET })
+const pay = new VoidlyPay({ apiBase: API, did: DID, secretBase64: SECRET })
 
 let CAPS_CACHE = { list: [], expires: 0 }
 async function getCaps() {

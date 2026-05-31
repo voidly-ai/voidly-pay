@@ -21,8 +21,8 @@ export function voidlyPayTools(cfg: VoidlyPayVercelConfig) {
   const pay = new VoidlyPay({
     did: cfg.did,
     secretBase64: cfg.secretBase64,
-    ...(cfg.baseUrl ? { baseUrl: cfg.baseUrl } : {}),
-  } as any)
+    ...(cfg.baseUrl ? { apiBase: cfg.baseUrl } : {}),
+  })
 
   const maxPriceDefault = cfg.maxPriceCredits ?? 5
   const timeoutDefault = cfg.timeoutS ?? 90
