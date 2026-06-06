@@ -16,6 +16,38 @@ import { randomUUID } from 'node:crypto'
 const API = process.env.VOIDLY_API || 'https://api.voidly.ai'
 const PORT = Number(process.env.VOIDLY_X402_ADAPTER_PORT || 8412)
 
+const PAYMENT_REQUEST_HEADERS = [
+  'content-type',
+  'authorization',
+  'x-payment',
+  'x-payment-proof',
+  'x-payment-signature',
+]
+
+const PAYMENT_RESPONSE_HEADERS = [
+  'payment-required',
+  'x-payment-required',
+  'x-payment-amount',
+  'x-payment-capability-id',
+  'x-payment-capability',
+  'x-payment-provider-did',
+  'x-payment-nonce',
+  'x-payment-settled',
+  'x-payment-receipt-state',
+]
+
+function writeCors(res) {
+  res.setHeader('access-control-allow-origin', '*')
+  res.setHeader('access-control-allow-methods', 'GET, HEAD, OPTIONS')
+  res.setHeader('access-control-allow-headers', PAYMENT_REQUEST_HEADERS.join(', '))
+  res.setHeader('access-control-expose-headers', PAYMENT_RESPONSE_HEADERS.join(', '))
+}
+
+function writeJson(res, status, body) {
+  res.writeHead(status, { 'content-type': 'application/json' })
+  res.end(JSON.stringify(body, null, 2))
+}
+
 async function findCheapest(slug) {
   const r = await fetch(`${API}/v1/pay/capability/search?capability=${encodeURIComponent(slug)}&limit=20`).then(r => r.json())
   const list = (r?.capabilities || []).filter(c => c.active).sort((a, b) => a.price_per_call_micro - b.price_per_call_micro)
@@ -56,31 +88,40 @@ async function waitForReceipt(hireId, deadlineMs = 60_000) {
 }
 
 const server = createServer(async (req, res) => {
-  res.setHeader('access-control-allow-origin', '*')
-  res.setHeader('access-control-allow-headers', '*')
-  res.setHeader('access-control-expose-headers', 'x-payment-required, x-payment-amount, x-payment-capability-id, x-payment-nonce, x-payment-settled')
+  writeCors(res)
   if (req.method === 'OPTIONS') {
     res.writeHead(204); res.end(); return
   }
 
   const url = new URL(req.url || '/', `http://${req.headers.host}`)
+
+  if (url.pathname === '/pay/x402' || url.pathname === '/x402/discovery') {
+    writeJson(res, 200, {
+      name: 'Voidly Pay x402 adapter',
+      docs: '/pay/x402',
+      discovery: '/x402/discovery',
+      resource_template: '/x402/{capability-slug}',
+      request_headers: PAYMENT_REQUEST_HEADERS,
+      response_headers: PAYMENT_RESPONSE_HEADERS,
+      flow: 'Call /x402/{capability-slug}; a no-proof call returns 402 with payment-required headers; retry with x-payment-proof and x-payment-signature.',
+    })
+    return
+  }
+
   if (!url.pathname.startsWith('/x402/')) {
-    res.writeHead(404, { 'content-type': 'application/json' })
-    res.end(JSON.stringify({ error: 'expected /x402/<capability-slug>' }))
+    writeJson(res, 404, { error: 'expected /x402/<capability-slug> or /pay/x402' })
     return
   }
 
   const slug = url.pathname.slice('/x402/'.length)
   if (!slug) {
-    res.writeHead(400, { 'content-type': 'application/json' })
-    res.end(JSON.stringify({ error: 'empty capability slug' }))
+    writeJson(res, 400, { error: 'empty capability slug' })
     return
   }
 
   const cap = await findCheapest(slug).catch(() => null)
   if (!cap) {
-    res.writeHead(404, { 'content-type': 'application/json' })
-    res.end(JSON.stringify({ error: `no active provider for capability '${slug}'` }))
+    writeJson(res, 404, { error: `no active provider for capability '${slug}'` })
     return
   }
 
@@ -89,6 +130,7 @@ const server = createServer(async (req, res) => {
   if (!proof || !sig) {
     // Issue the 402 challenge.
     const nonce = randomUUID()
+    res.setHeader('payment-required', 'voidly-pay')
     res.setHeader('x-payment-required', 'voidly-pay')
     res.setHeader('x-payment-amount', String((cap.price_per_call_micro / 1_000_000).toFixed(6)))
     res.setHeader('x-payment-capability-id', cap.id)
@@ -120,8 +162,7 @@ const server = createServer(async (req, res) => {
 
     const receipt = await waitForReceipt(hireId)
     if (!receipt) {
-      res.writeHead(504, { 'content-type': 'application/json' })
-      res.end(JSON.stringify({ error: 'timeout waiting for provider receipt', hire_id: hireId }))
+      writeJson(res, 504, { error: 'timeout waiting for provider receipt', hire_id: hireId })
       return
     }
 
@@ -140,8 +181,7 @@ const server = createServer(async (req, res) => {
       })(),
     }))
   } catch (e) {
-    res.writeHead(502, { 'content-type': 'application/json' })
-    res.end(JSON.stringify({ error: String(e.message || e), scheme: 'voidly-pay' }))
+    writeJson(res, 502, { error: String(e.message || e), scheme: 'voidly-pay' })
   }
 })
 
