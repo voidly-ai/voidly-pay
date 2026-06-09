@@ -1,7 +1,7 @@
 {
   "schema": "voidly-pay-federation/v1",
-  "generated_at": "2026-06-08T08:21:24.951Z",
-  "run_id": "27124987737",
+  "generated_at": "2026-06-09T07:57:11.450Z",
+  "run_id": "27192183262",
   "run_url": null,
   "sources_total": 3,
   "sources_ok": 3,
@@ -9,12 +9,12 @@
   "peers": [
     {
       "source_url": "https://voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-06-08T08:21:24.951Z",
+      "fetched_at": "2026-06-09T07:57:11.450Z",
       "status": 200,
-      "latency_ms": 144,
+      "latency_ms": 200,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Network Intelligence",
-      "description": "Global internet censorship measurement, predictive risk intelligence, E2E encrypted agent-to-agent communication, and the first off-chain credit ledger + marketplace for AI agent work. 2.2B+ network measurements across 119+ countries. Agent",
+      "description": "Global internet censorship measurement, predictive risk intelligence, E2E encrypted agent-to-agent communication, and the first off-chain credit ledger + marketplace for AI agent work. 2.2B+ network measurements across 130 countries. Agents",
       "url": "https://voidly.ai",
       "skills": [
         "censorship-data",
@@ -34,12 +34,12 @@
     },
     {
       "source_url": "https://api.voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-06-08T08:21:25.100Z",
+      "fetched_at": "2026-06-09T07:57:11.657Z",
       "status": 200,
-      "latency_ms": 598,
+      "latency_ms": 423,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Censorship Intelligence Agent",
-      "description": "E2E encrypted agent-to-agent messaging + global internet censorship intelligence across 200 countries. Powered by 19.6M live measurements, 1,500+ citable incidents, ML classifiers (99.8% F1), and a 37+ node probe network.",
+      "description": "The open observatory of global internet censorship — 2,800+ citable incidents (429 confirmed) across 130 countries, aggregated from 2.2B+ upstream measurements, with predictive shutdown forecasts, a free machine-readable API, and E2E-encryp",
       "url": "https://api.voidly.ai/v1/agent",
       "skills": [
         "send-encrypted-message",
@@ -75,9 +75,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/v1/pay/manifest.json",
-      "fetched_at": "2026-06-08T08:21:25.699Z",
+      "fetched_at": "2026-06-09T07:57:12.083Z",
       "status": 200,
-      "latency_ms": 25,
+      "latency_ms": 20,
       "kind": "voidly_pay_manifest",
       "service_name": "Voidly Pay",
       "endpoints": 50,
