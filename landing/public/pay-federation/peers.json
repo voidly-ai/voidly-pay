@@ -1,7 +1,7 @@
 {
   "schema": "voidly-pay-federation/v1",
-  "generated_at": "2026-06-12T08:10:04.043Z",
-  "run_id": "27403343093",
+  "generated_at": "2026-06-13T07:54:40.625Z",
+  "run_id": "27460929388",
   "run_url": null,
   "sources_total": 3,
   "sources_ok": 3,
@@ -9,9 +9,9 @@
   "peers": [
     {
       "source_url": "https://voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-06-12T08:10:04.043Z",
+      "fetched_at": "2026-06-13T07:54:40.625Z",
       "status": 200,
-      "latency_ms": 233,
+      "latency_ms": 154,
       "kind": "a2a_agent_card",
       "service_name": "Voidly",
       "description": "The open observatory of global internet censorship — measured, predicted, and machine-readable. 2.2B+ network measurements across 130 countries: live censorship rankings, citable incidents with evidence permalinks, and KeepItOn-validated sh",
@@ -34,9 +34,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-06-12T08:10:04.281Z",
+      "fetched_at": "2026-06-13T07:54:40.785Z",
       "status": 200,
-      "latency_ms": 68,
+      "latency_ms": 40,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Censorship Intelligence Agent",
       "description": "The open observatory of global internet censorship — 2,800+ citable incidents (429 confirmed) across 130 countries, aggregated from 2.2B+ upstream measurements, with predictive shutdown forecasts, a free machine-readable API, and E2E-encryp",
@@ -75,9 +75,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/v1/pay/manifest.json",
-      "fetched_at": "2026-06-12T08:10:04.351Z",
+      "fetched_at": "2026-06-13T07:54:40.827Z",
       "status": 200,
-      "latency_ms": 29,
+      "latency_ms": 19,
       "kind": "voidly_pay_manifest",
       "service_name": "Voidly Pay",
       "endpoints": 50,
