@@ -1,7 +1,7 @@
 {
   "schema": "voidly-pay-federation/v1",
-  "generated_at": "2026-06-14T08:04:24.106Z",
-  "run_id": "27492714471",
+  "generated_at": "2026-06-15T08:39:23.926Z",
+  "run_id": "27534353582",
   "run_url": null,
   "sources_total": 3,
   "sources_ok": 3,
@@ -9,9 +9,9 @@
   "peers": [
     {
       "source_url": "https://voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-06-14T08:04:24.106Z",
+      "fetched_at": "2026-06-15T08:39:23.926Z",
       "status": 200,
-      "latency_ms": 681,
+      "latency_ms": 594,
       "kind": "a2a_agent_card",
       "service_name": "Voidly",
       "description": "The open observatory of global internet censorship — measured, predicted, and machine-readable. 2.2B+ network measurements across 130 countries: live censorship rankings, citable incidents with evidence permalinks, and KeepItOn-validated sh",
@@ -34,12 +34,12 @@
     },
     {
       "source_url": "https://api.voidly.ai/.well-known/agent-card.json",
-      "fetched_at": "2026-06-14T08:04:24.792Z",
+      "fetched_at": "2026-06-15T08:39:24.526Z",
       "status": 200,
-      "latency_ms": 379,
+      "latency_ms": 65,
       "kind": "a2a_agent_card",
       "service_name": "Voidly Censorship Intelligence Agent",
-      "description": "The open observatory of global internet censorship — 2,800+ citable incidents (429 confirmed) across 130 countries, aggregated from 2.2B+ upstream measurements, with predictive shutdown forecasts, a free machine-readable API, and E2E-encryp",
+      "description": "The open observatory of global internet censorship — 2,800+ citable incidents (195 documented censorship) across 130 countries, aggregated from 2.2B+ upstream measurements, with predictive shutdown forecasts, a free machine-readable API, an",
       "url": "https://api.voidly.ai/v1/agent",
       "skills": [
         "send-encrypted-message",
@@ -75,9 +75,9 @@
     },
     {
       "source_url": "https://api.voidly.ai/v1/pay/manifest.json",
-      "fetched_at": "2026-06-14T08:04:25.173Z",
+      "fetched_at": "2026-06-15T08:39:24.593Z",
       "status": 200,
-      "latency_ms": 18,
+      "latency_ms": 16,
       "kind": "voidly_pay_manifest",
       "service_name": "Voidly Pay",
       "endpoints": 50,
