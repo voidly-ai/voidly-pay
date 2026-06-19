@@ -48,6 +48,27 @@ export VOIDLY_X402_ADAPTER_PORT=8412
 node server.js
 ```
 
+## Browser and discovery endpoints
+
+The adapter also serves a lightweight discovery/doc endpoint so hosted manifests do
+not point browser agents at a dead page:
+
+- `GET /pay/x402` — human/agent-readable adapter summary
+- `GET /x402/discovery` — same payload for crawlers that expect a discovery URL
+
+Browser clients can preflight and then retry the payment cycle because the
+adapter explicitly allows payment proof headers:
+
+```http
+Access-Control-Allow-Headers: content-type, authorization, x-payment, x-payment-proof, x-payment-signature
+Access-Control-Expose-Headers: payment-required, x-payment-required, x-payment-amount, x-payment-capability-id, x-payment-capability, x-payment-provider-did, x-payment-nonce, x-payment-settled, x-payment-receipt-state
+```
+
+The first no-proof call now exposes both `payment-required` and
+`x-payment-required` so generic x402 clients can discover the challenge while
+older Voidly-specific clients can keep reading the existing `x-payment-*`
+headers.
+
 The adapter is **stateless** — it doesn't hold funds of its own. Each 402-cycle is paid for by the client's wallet; the adapter just relays the hire to Voidly Pay on the client's behalf. This means:
 
 - The adapter operator never has custody of anyone's credits.
