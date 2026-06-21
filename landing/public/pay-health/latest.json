@@ -1,44 +1,44 @@
 {
   "schema": "voidly-pay-network-health/v1",
-  "generated_at": "2026-06-21T20:46:05.448Z",
-  "run_id": "27916964598",
+  "generated_at": "2026-06-21T21:27:11.013Z",
+  "run_id": "27917986505",
   "run_url": null,
   "health": {
     "ok": true,
     "system_frozen": false,
-    "latency_ms": 683,
+    "latency_ms": 386,
     "counts": {
-      "wallets": 5920,
-      "transfers_settled_24h": 3074,
+      "wallets": 5922,
+      "transfers_settled_24h": 3106,
       "active_admin_keys": 2
     }
   },
   "stats_summary": {
-    "wallets": 5920,
+    "wallets": 5922,
     "active_capabilities": 19,
     "distinct_providers": 7,
-    "hires_total": 22011,
-    "hires_completed": 17038,
-    "value_settled_cr": 14.5792
+    "hires_total": 22018,
+    "hires_completed": 17041,
+    "value_settled_cr": 14.5818
   },
   "providers": [
-    {
-      "did": "did:voidly:3bzjV3jSMCuTwZ6NRzrS8m",
-      "capability": "echo.text-1777170066728",
-      "capability_id": "ea0ac3a8-b35c-44c2-bf76-4c964c8dd559",
-      "price_micro": 100,
-      "status": "hire_failed",
-      "error": "hire f19b55d4-48ce-47ac-9542-36fb8128bc32 did not reach claimed state (got requested)",
-      "latency_ms": 61980
-    },
     {
       "did": "did:voidly:Ck56rQkhsBe3bJa62bg81t",
       "capability": "echo.text-1777170057372",
       "capability_id": "4f862bbb-050b-47a6-a189-71a23d10b936",
       "price_micro": 100,
       "status": "hire_failed",
-      "error": "hire f347dee9-6dc6-4ef8-b123-c9c716046d07 did not reach claimed state (got requested)",
-      "latency_ms": 62247
+      "error": "hire 8c973cf3-87d3-4e8a-b0e3-a5bf9bef0437 did not reach claimed state (got requested)",
+      "latency_ms": 61106
+    },
+    {
+      "did": "did:voidly:3bzjV3jSMCuTwZ6NRzrS8m",
+      "capability": "echo.text-1777170066728",
+      "capability_id": "ea0ac3a8-b35c-44c2-bf76-4c964c8dd559",
+      "price_micro": 100,
+      "status": "hire_failed",
+      "error": "hire db90b22e-6e9b-46ae-a567-c534df594e10 did not reach claimed state (got requested)",
+      "latency_ms": 62272
     },
     {
       "did": "did:voidly:AsAVzZ2dtMrntgGRco8KkW",
@@ -47,10 +47,19 @@
       "price_micro": 800,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "f1a08228-dfce-4a58-8e04-b10a071dfbb0",
+      "receipt_id": "47a70af7-8540-4f0e-aff4-8d75f7e8dece",
       "accepted": true,
       "verified": true,
-      "latency_ms": 11285
+      "latency_ms": 9354
+    },
+    {
+      "did": "did:voidly:8dtaBupp8ZZoaB8CQHBp2U",
+      "capability": "bb.test.cap",
+      "capability_id": "492df64a-df3e-47fb-bc67-ec6008835880",
+      "price_micro": 1000,
+      "status": "hire_failed",
+      "error": "hire 2709adfc-6b59-492e-a126-5da478654afd did not reach claimed state (got requested)",
+      "latency_ms": 62340
     },
     {
       "did": "did:voidly:Eg8JvTNrBLcpbX3r461jJB",
@@ -59,19 +68,10 @@
       "price_micro": 1000,
       "status": "ok",
       "receipt_state": "pending_acceptance",
-      "receipt_id": "631feeec-b035-4360-996f-c8866607934b",
+      "receipt_id": "a2ec2ba7-38df-44d0-8e95-a616bc673b1d",
       "accepted": true,
       "verified": true,
-      "latency_ms": 3055
-    },
-    {
-      "did": "did:voidly:8dtaBupp8ZZoaB8CQHBp2U",
-      "capability": "bb.test.cap",
-      "capability_id": "492df64a-df3e-47fb-bc67-ec6008835880",
-      "price_micro": 1000,
-      "status": "hire_failed",
-      "error": "hire 021579c8-c988-45aa-ae3c-b496f219f1cb did not reach claimed state (got requested)",
-      "latency_ms": 61865
+      "latency_ms": 9650
     },
     {
       "did": "did:voidly:mkt-b-1776622972",
@@ -79,8 +79,8 @@
       "capability_id": "af7719a4-f4bf-4a8c-aafb-8c1a7b8e226c",
       "price_micro": 500000,
       "status": "hire_failed",
-      "error": "hire 1113de57-7d5e-413b-94da-8a16f560d0ca did not reach claimed state (got requested)",
-      "latency_ms": 61914
+      "error": "hire 9e1f34ee-012a-484c-a5df-7e8eca10d712 did not reach claimed state (got requested)",
+      "latency_ms": 62375
     }
   ],
   "ok": false,
