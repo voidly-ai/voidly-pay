@@ -1,14 +1,14 @@
 {
   "schema": "voidly-pay-reach/v1",
-  "generated_at": "2026-07-20T10:29:01.440Z",
-  "run_id": "29735204076",
+  "generated_at": "2026-07-27T10:55:55.222Z",
+  "run_id": "30259949987",
   "surfaces": [
     {
       "name": "npm @voidly/pay-sdk",
       "url": "https://registry.npmjs.org/@voidly/pay-sdk",
-      "checked_at": "2026-07-20T10:29:01.440Z",
+      "checked_at": "2026-07-27T10:55:55.222Z",
       "status": 200,
-      "latency_ms": 503,
+      "latency_ms": 260,
       "ok": true,
       "version": "1.0.1",
       "last_modified": "2026-04-19T20:10:04.622Z"
@@ -16,9 +16,9 @@
     {
       "name": "npm @voidly/mcp-server",
       "url": "https://registry.npmjs.org/@voidly/mcp-server",
-      "checked_at": "2026-07-20T10:29:01.953Z",
+      "checked_at": "2026-07-27T10:55:55.490Z",
       "status": 200,
-      "latency_ms": 523,
+      "latency_ms": 285,
       "ok": true,
       "version": "2.17.0",
       "last_modified": "2026-04-27T18:25:08.635Z"
@@ -26,9 +26,9 @@
     {
       "name": "npm @voidly/pay-cli",
       "url": "https://registry.npmjs.org/@voidly/pay-cli",
-      "checked_at": "2026-07-20T10:29:02.481Z",
+      "checked_at": "2026-07-27T10:55:55.779Z",
       "status": 200,
-      "latency_ms": 390,
+      "latency_ms": 263,
       "ok": true,
       "version": "1.0.3",
       "last_modified": "2026-04-26T20:15:46.630Z"
@@ -36,77 +36,77 @@
     {
       "name": "npm @voidly/agent-sdk",
       "url": "https://registry.npmjs.org/@voidly/agent-sdk",
-      "checked_at": "2026-07-20T10:29:02.872Z",
+      "checked_at": "2026-07-27T10:55:56.043Z",
       "status": 200,
-      "latency_ms": 324,
+      "latency_ms": 307,
       "ok": true,
-      "version": "3.39.0",
-      "last_modified": "2026-07-12T16:30:30.919Z"
+      "version": "3.40.0",
+      "last_modified": "2026-07-27T00:03:38.132Z"
     },
     {
       "name": "pypi voidly-pay",
       "url": "https://pypi.org/pypi/voidly-pay/json",
-      "checked_at": "2026-07-20T10:29:03.202Z",
+      "checked_at": "2026-07-27T10:55:56.356Z",
       "status": 200,
-      "latency_ms": 16,
+      "latency_ms": 72,
       "ok": true,
       "version": "2.0.2"
     },
     {
       "name": "HF Space — marketplace",
       "url": "https://huggingface.co/spaces/emperor-mew/voidly-pay-marketplace",
-      "checked_at": "2026-07-20T10:29:03.219Z",
+      "checked_at": "2026-07-27T10:55:56.429Z",
       "status": 200,
-      "latency_ms": 84,
+      "latency_ms": 123,
       "ok": true
     },
     {
       "name": "HF Dataset — daily snap",
       "url": "https://huggingface.co/datasets/emperor-mew/voidly-pay-stats",
-      "checked_at": "2026-07-20T10:29:03.304Z",
+      "checked_at": "2026-07-27T10:55:56.556Z",
       "status": 401,
-      "latency_ms": 22,
+      "latency_ms": 83,
       "ok": false,
       "error": "HTTP 401"
     },
     {
       "name": "HF Collection",
       "url": "https://huggingface.co/collections/emperor-mew/voidly-ai-agent-infrastructure-69e538d5a7a00f6b902bfc9b",
-      "checked_at": "2026-07-20T10:29:03.326Z",
+      "checked_at": "2026-07-27T10:55:56.639Z",
       "status": 200,
-      "latency_ms": 77,
+      "latency_ms": 176,
       "ok": true
     },
     {
       "name": "ClawHub skill voidly-pay",
       "url": "https://clawhub.ai/s/voidly-pay",
-      "checked_at": "2026-07-20T10:29:03.406Z",
+      "checked_at": "2026-07-27T10:55:56.826Z",
       "status": 200,
-      "latency_ms": 503,
+      "latency_ms": 663,
       "ok": true
     },
     {
       "name": "voidly.ai /pay live",
       "url": "https://voidly.ai/pay",
-      "checked_at": "2026-07-20T10:29:03.912Z",
+      "checked_at": "2026-07-27T10:55:57.550Z",
       "status": 200,
-      "latency_ms": 131,
+      "latency_ms": 129,
       "ok": true
     },
     {
       "name": "api.voidly.ai /pay/manifest",
       "url": "https://api.voidly.ai/v1/pay/manifest.json",
-      "checked_at": "2026-07-20T10:29:04.046Z",
+      "checked_at": "2026-07-27T10:55:57.682Z",
       "status": 200,
-      "latency_ms": 402,
+      "latency_ms": 542,
       "ok": true
     },
     {
       "name": "voidly.ai agent-card",
       "url": "https://voidly.ai/.well-known/agent-card.json",
-      "checked_at": "2026-07-20T10:29:04.449Z",
+      "checked_at": "2026-07-27T10:55:58.225Z",
       "status": 200,
-      "latency_ms": 35,
+      "latency_ms": 26,
       "ok": true
     }
   ],
